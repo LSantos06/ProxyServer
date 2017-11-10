@@ -1,24 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "inspencao.h"
-
-int main()
-{
-	int i=0;
-
-	printf("-----------DENY LIST----------\n");
-	i=vetor_do_txt("denyterms.txt","foFiNhos");
-	printf("Saida = %d\n",i);
-	printf("-----------WHITE LIST----------\n");
-	i=vetor_do_txt("whitelist.txt","www.youtube.com");
-	printf("Saida = %d\n",i);
-	printf("-----------BLACK LIST----------\n");
-	i=vetor_do_txt("blacklist.txt","www.netFIX.com.br");
-	printf("Saida = %d\n",i);
-	return i;
-}
-
+#include "filtragem.h"
 
 
 FILE* abrindo_arquivo(char* nome_arquivo){
