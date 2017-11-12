@@ -69,7 +69,7 @@ char buffer[6000];
 
 // TODO :: CONTINUAR
 // aceitando a socket 	
-new_accept_sock = accept(num_socket,(struct sockaddr *)&server_end,&sin_size);
+new_accept_sock = accept(num_socket,(struct sockaddr *)&client_end,&sin_size);
 //new_accept_sock = connect(num_socket, (struct sockaddr *)&server_end, sizeof(struct sockaddr));
 
 /* TODO : CONTINUAR 
@@ -99,6 +99,39 @@ if( recv(new_accept_sock, buffer, 6000 , 0) < 0)
     printf("HTTP == %s\n", HTTP);
     printf("HOST == %s\n",HOST);
     */ 
+// USANDO pid para passar o cliente para o processo filho
+struct hostent * host;
+pid_t pid = fork();
+
+if(!pid){
+
+if( recv(new_accept_sock, buffer, 6000 , 0) < 0)
+    {
+        printf("recv failed da socket aceita");
+    }else{
+    printf("Resposta recebida da socket aceita\n");
+    puts(buffer);
+    }
+    // tentando verificar um padrao 
+    // TODO: depois modularizar para alterar e pa 
+    char GET[10],URL[120],HTTP[15],HOST_fix[10],HOST[100];
+    sscanf(buffer,"%s %s %s %s %s",GET,URL,HTTP,HOST_fix,HOST);
+    printf("GET == %s\n", GET);
+    printf("URL == %s\n", URL);
+    printf("HTTP == %s\n", HTTP);
+    if((strcmp(GET,"GET")!=0)|| ((strcmp(HTTP,"HTTP/1.0"))!= 0 && (strcmp(HTTP,"HTTP/1.1"))))
+    {	// SE FOR DIFERENTE DE GET = 1
+    	// SE NAO FOR HTTP1.0 e NEM HTTP1.1 = (PORTA E)1 
+       	printf("Cabecalho nao corresponde ao padrao ... \n");
+    	// TODO: fazer log de erro .... ou enviar mensagem de erro
+   		close(new_accept_sock);
+    } 
+    // esta eh a primeira linha sempre sera comecara com isso
+    printf("HOST == %s\n",HOST_fix);
+    printf("valor do HOST = %s\n",HOST);
+	
+}    
+
     return 0;
 
 }
