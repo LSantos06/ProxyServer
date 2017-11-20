@@ -40,8 +40,7 @@ FILE* abrindo_arquivo(char* nome_arquivo){
 int checkLists(char* nome_arquivo,char * mensagem){
 	
 	char lista[SIZE_LISTA][MAX_STR];
-	int i=0;
-	
+	int i=0, saida = 0;
 	char procurado[strlen(mensagem)];
  	// zerando a string
  	memset (procurado,'\0',strlen(mensagem));
@@ -55,13 +54,13 @@ int checkLists(char* nome_arquivo,char * mensagem){
 		
 		if (strnicmp(procurado,lista[i],(strlen(lista[i])-1))==0)
 		{
-			return 1;
+			saida = 1;
 			
 		}
 		i++;
 	} 
 	fclose(fp);
-	return 0;
+	return saida;
 	}
 //por enquanto retorna um int para indicar se ta ou nao ta proibido
 int filtragem_url(char * url)
@@ -131,9 +130,10 @@ void remove_http(char* url_http){
 
 int denyterms_request(char * request){
 	char * aux_s = malloc(MAX_STR*sizeof(char));
-	int * tamanho = malloc(SIZE_LISTA*sizeof(int));
+	int * tamanho;
 	tamanho = Length_denyterms();
-	int i_aux=0,k=0,i=0,j=0,qnt = tamanho[0];
+	int i_aux=0,k=0,i=0,j=0,qnt;
+	qnt	= tamanho[0];
 	
 	for(j=1;j<=qnt;j++)
 	{
@@ -161,7 +161,8 @@ int denyterms_request(char * request){
 			}
 		
 		}
-		}
+		
+	}
 	free(aux_s);
 	free(tamanho);
 	return 0;
