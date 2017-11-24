@@ -25,17 +25,28 @@
 #define BACKLOG 20
 
 /*
+ Struct para armazenar os campos da linha de requisicao
+*/
+typedef struct campos_requisicao{
+    char *comando;
+    char *url;
+    char *versao;
+
+} Requisicao;
+
+/*
  Struct para armazenar os campos do cabecalho
 */
-typedef struct header_files{
-    int last-modified;
-    int if-modified-since;
-    int set-cookie;
-    int content-type;
-    int host;
-    int user-agent;
-    int x-content-type-options;
-    int retry-after;
+typedef struct campos_header{
+    Requisicao requisicao;
+    char *host;
+    char *user_agent;
+    char *accept;
+    char *accept_encoding;
+    char *accept_language;        
+    char *cookie;
+    char *connection;
+
 } Header;
 
 int main(int argc, char* argv[]){
@@ -94,16 +105,13 @@ int main(int argc, char* argv[]){
         exit(-4);
     }		
 
-    int sin_size = sizeof(client_end);
-    int new_accept_sock;
-    char buffer[6000];
-
     // TODO :: CONTINUAR
 
     /* Aceitando a socket */	
     // accept(num_socket, (struct sockaddr *)&server_end, sizeof(struct sockaddr));
     //  - retorna negativo se der erro 
-    new_accept_sock = accept(num_socket,(struct sockaddr *)&client_end,&sin_size);
+    int sin_size = sizeof(client_end);
+    int new_accept_sock = accept(num_socket,(struct sockaddr *)&client_end,&sin_size);
     if(auxERRO < 0){
         perror("Erro ao aceitar a socket, valor negativo retornado\n");
         exit(-5);
@@ -140,7 +148,25 @@ int main(int argc, char* argv[]){
     printf("HOST == %s\n",HOST);
     
     */ 
-    
+
+    /* Instanciacao dos campos do cabecalho, requisicao e dados */
+    char buffer[6000];
+    Requisicao linha_requisicao = {
+        .comando = "0",
+        .url = "0",
+        .versao = "0",
+    };
+    Header cabecalho = {
+        .requisicao = linha_requisicao,
+        .host = "0",
+        .user_agent = "0",
+        .accept = "0",
+        .accept_encoding = "0",
+        .accept_language = "0",
+        .cookie = "0",
+        .connection = "0"
+    };
+
     // USANDO pid para passar o cliente para o processo filho
     struct hostent * host;
     pid_t pid = fork();
@@ -155,7 +181,7 @@ int main(int argc, char* argv[]){
             puts(buffer);
         }
         
-        // tentando verificar um padrao 
+        /* Preenche as structs com os campos */
 
         // TODO: depois modularizar para alterar e pa 
         
