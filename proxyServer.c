@@ -19,10 +19,14 @@
     -6 = erro dados
 */
 
-// TODO: DEFINIR BACKLOG E TAMBEM SE TERA UMA PORTA PADRAO OU NAO
+//TODO: DEFINIR BACKLOG E TAMBEM SE TERA UMA PORTA PADRAO OU NAO
 
 // numero de conexoes pendentes na fila
 #define BACKLOG 20
+
+//TODO: Alocacao dinamica
+// tamanho do buffer
+#define BUFFER_SIZE 6000
 
 /*
  Struct para armazenar os campos da linha de requisicao
@@ -150,7 +154,7 @@ int main(int argc, char* argv[]){
     */ 
 
     /* Instanciacao dos campos do cabecalho, requisicao e dados */
-    char buffer[6000];
+    char buffer[BUFFER_SIZE];
     Requisicao linha_requisicao = {
         .comando = "0",
         .url = "0",
@@ -173,7 +177,7 @@ int main(int argc, char* argv[]){
 
     if(!pid){
         if(recv(new_accept_sock, buffer, 6000 , 0) < 0){
-            printf("Erro ao receber dados da socket aceita, valor negativo retornado\n");
+            perror("Erro ao receber dados da socket aceita, valor negativo retornado\n");
             exit(-6);
         }
         else{
@@ -181,16 +185,78 @@ int main(int argc, char* argv[]){
             puts(buffer);
         }
         
-        /* Preenche as structs com os campos */
-
         // TODO: depois modularizar para alterar e pa 
-        
-        char GET[10],URL[120],HTTP[15],HOST_fix[10],HOST[100];
-        sscanf(buffer,"%s %s %s %s %s",GET,URL,HTTP,HOST_fix,HOST);
-        printf("GET == %s\n", GET);
-        printf("URL == %s\n", URL);
-        printf("HTTP == %s\n", HTTP);
-        
+
+        /* Preenche as structs com os campos */
+        // copia o buffer para outro buffer a ser processado
+        char buffer_token[BUFFER_SIZE];        
+        strcpy(buffer_token, buffer);
+
+        // separacao dos campos do cabecalho
+        char *token;
+
+        /* Linha de requisicao */
+        token = strtok(buffer, "\n");
+
+        // buffers para manipulacao
+        char linha_requisicao[BUFFER_SIZE], *token_requisicao;
+
+        // copia o token para outro token a ser processado
+        strcpy(linha_requisicao, token);
+
+        // COMANDO
+        token_requisicao = strtok(linha_requisicao, " ");
+        cabecalho.requisicao.comando = token_requisicao;
+        printf("Comando: %s\n", cabecalho.requisicao.comando);
+
+        // URL
+        token_requisicao = strtok(NULL, " ");
+        cabecalho.requisicao.url = token_requisicao;
+        printf("URL: %s\n", cabecalho.requisicao.url);
+
+        // VERSAO
+        token_requisicao = strtok(NULL, " ");
+        cabecalho.requisicao.versao = token_requisicao;
+        printf("Versao: %s\n", cabecalho.requisicao.versao);        
+
+        /* Linhas de cabecalho */
+        token = strtok(NULL, "\n");
+
+        // buffers para manipulacao
+        char linha_cabecalho[BUFFER_SIZE], *token_cabecalho; 
+
+        // copia o token para outro token a ser processado
+        strcpy(linha_cabecalho, token);       
+
+        /*token = strtok(NULL, "\n");
+        cabecalho.host = token;
+        printf("Host: %s\n", cabecalho.host);
+
+        token = strtok(NULL, "\n");
+        cabecalho.user_agent = token;
+        printf("User-agent: %s\n", cabecalho.user_agent);
+
+        token = strtok(NULL, "\n");
+        cabecalho.accept = token;
+        printf("Accept: %s\n", cabecalho.accept);
+
+        token = strtok(NULL, "\n");
+        cabecalho.accept_encoding = token;
+        printf("Accept-encoding: %s\n", cabecalho.accept_encoding);
+
+        token = strtok(NULL, "\n");
+        cabecalho.accept_language = token;
+        printf("Accept-language: %s\n", cabecalho.accept_language); 
+
+        token = strtok(NULL, "\n");
+        cabecalho.cookie = token;
+        printf("Cookie: %s\n", cabecalho.cookie);         
+
+        token = strtok(NULL, "\n");
+        cabecalho.connection = token;
+        printf("Connection: %s\n", cabecalho.connection);  */
+
+        /*
         if((strcmp(GET,"GET")!=0)|| ((strcmp(HTTP,"HTTP/1.0"))!= 0 && (strcmp(HTTP,"HTTP/1.1")))){
             // SE FOR DIFERENTE DE GET = 1
             // SE NAO FOR HTTP1.0 e NEM HTTP1.1 = (PORTA E)1 
@@ -201,7 +267,7 @@ int main(int argc, char* argv[]){
         // esta eh a primeira linha sempre sera comecara com isso
         printf("HOST == %s\n",HOST_fix);
         printf("valor do HOST = %s\n",HOST);
-        
+        */
     }    
 
     return 0;
