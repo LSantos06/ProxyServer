@@ -60,6 +60,7 @@ int main(int argc, char* argv[]){
         exit(-1);
     }
 
+    printf("\n=_=_=_=_=_=_=_=_\n");
     printf("Comecando a escutar a conexao\n");
 
     struct sockaddr_in endereco, server_end, client_end;
@@ -87,7 +88,7 @@ int main(int argc, char* argv[]){
     //  - retorna um valor para descrever a socket
     int num_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if(num_socket < 0){
-        perror("Socket nao valido, valor negativo retornado\n");
+        perror("Socket nao valido, valor negativo retornado");
         exit(-2);
     }
 
@@ -96,7 +97,7 @@ int main(int argc, char* argv[]){
     //  - retorna negativo se der erro 
     int auxERRO = bind(num_socket,(struct sockaddr *)&server_end,sizeof(server_end));
     if(auxERRO < 0){
-        perror("Erro ao associar porta, valor negativo retornado\n");
+        perror("Erro ao associar porta, valor negativo retornado");
         exit(-3);
     }		
 
@@ -105,11 +106,9 @@ int main(int argc, char* argv[]){
     //  - retorna negativo se der erro 
     auxERRO = listen(num_socket,BACKLOG);
     if(auxERRO < 0){
-        perror("Erro ao escutar a porta, valor negativo retornado\n");
+        perror("Erro ao escutar a porta, valor negativo retornado");
         exit(-4);
     }		
-
-    // TODO :: CONTINUAR
 
     /* Aceitando a socket */	
     // accept(num_socket, (struct sockaddr *)&server_end, sizeof(struct sockaddr));
@@ -117,41 +116,9 @@ int main(int argc, char* argv[]){
     int sin_size = sizeof(client_end);
     int new_accept_sock = accept(num_socket,(struct sockaddr *)&client_end,&sin_size);
     if(auxERRO < 0){
-        perror("Erro ao aceitar a socket, valor negativo retornado\n");
+        perror("Erro ao aceitar a socket, valor negativo retornado");
         exit(-5);
     }	
-
-    // TODO :: CONTINUAR
-
-    /*  
-     RELATIVE : Executando uma vez, recebe o metodo GET ... Mas nao acessa a pagina	
-     NEW_SOCKET_NUM que esta mostrando o buffer
-     DEPOIS O PROGRAMA FECHA 
-
-    if(recv(num_socket, buffer, 6000 , 0) < 0){
-        printf("falhou socket nao aceita \n\n");
-    }
-    else{
-        printf("Resposta recebida da socket nao aceita\n");
-        puts(buffer);	
-    }
-    if(recv(new_accept_sock, buffer, 6000 , 0) < 0){
-        printf("recv failed da socket aceita");
-    }
-    else{
-        printf("Resposta recebida da socket aceita\n");
-        puts(buffer);
-    }
-        
-    // tentando verificar um padrao 
-    char GET[10],URL[120],HTTP[15],HOST[10];
-    sscanf(buffer,"%s %s %s %s",GET,URL,HTTP,HOST);
-    printf("GET == %s\n", GET);
-    printf("URL == %s\n", URL);
-    printf("HTTP == %s\n", HTTP);
-    printf("HOST == %s\n",HOST);
-    
-    */ 
 
     /* Instanciacao dos campos do cabecalho, requisicao e dados */
     char buffer[BUFFER_SIZE];
@@ -177,84 +144,98 @@ int main(int argc, char* argv[]){
 
     if(!pid){
         if(recv(new_accept_sock, buffer, 6000 , 0) < 0){
-            perror("Erro ao receber dados da socket aceita, valor negativo retornado\n");
+            perror("Erro ao receber dados da socket aceita, valor negativo retornado");
             exit(-6);
         }
         else{
+            printf("\n=_=_=_=_=_=_=_=_\n");
             printf("Resposta recebida da socket aceita\n");
+            printf("\n=_=_=_=_=_=_=_=_\n");
             puts(buffer);
         }
-        
-        // TODO: depois modularizar para alterar e pa 
 
         /* Preenche as structs com os campos */
-        // copia o buffer para outro buffer a ser processado
-        char buffer_token[BUFFER_SIZE];        
+        printf("\n=_=_=_=_=_=_=_=_\n");
+        // buffer para manipulacao
+        char buffer_token[BUFFER_SIZE];  
         strcpy(buffer_token, buffer);
-
-        // separacao dos campos do cabecalho
+        // vetor de linhas
+        int i=0;
+        char *linhas[BUFFER_SIZE];
+        // separacao do buffer em linhas
         char *token;
+        token = strtok(buffer_token, "\n");
+        // preenchimento da linha de requisicao
+        linhas[i] = token; 
+        //printf("%s\n", linhas[i]);
+        // preenchimento do vetor de linhas de cabecalho
+        while(token != NULL){
+            i++;
+            token = strtok(NULL, "\n");
+            linhas[i] = token; 
+            //printf("%s\n", linhas[i]);
+        }
+        i=0;
 
         /* Linha de requisicao */
-        token = strtok(buffer, "\n");
-
-        // buffers para manipulacao
-        char linha_requisicao[BUFFER_SIZE], *token_requisicao;
-
-        // copia o token para outro token a ser processado
-        strcpy(linha_requisicao, token);
-
         // COMANDO
-        token_requisicao = strtok(linha_requisicao, " ");
-        cabecalho.requisicao.comando = token_requisicao;
+        token = strtok(linhas[i], " ");
+        cabecalho.requisicao.comando = token;
         printf("Comando: %s\n", cabecalho.requisicao.comando);
-
         // URL
-        token_requisicao = strtok(NULL, " ");
-        cabecalho.requisicao.url = token_requisicao;
+        token = strtok(NULL, " ");
+        cabecalho.requisicao.url = token;
         printf("URL: %s\n", cabecalho.requisicao.url);
-
         // VERSAO
-        token_requisicao = strtok(NULL, " ");
-        cabecalho.requisicao.versao = token_requisicao;
-        printf("Versao: %s\n", cabecalho.requisicao.versao);        
+        token = strtok(NULL, " ");
+        cabecalho.requisicao.versao = token;
+        printf("Versao: %s\n", cabecalho.requisicao.versao);  
 
         /* Linhas de cabecalho */
-        token = strtok(NULL, "\n");
+        while(linhas[i] != NULL){
+            i++;
+            token = strtok(linhas[i], ":");
+            //printf("%s\n", token);
 
-        // buffers para manipulacao
-        char linha_cabecalho[BUFFER_SIZE], *token_cabecalho; 
+            if(!strcmp(token,"Host")){
+                token = strtok(NULL, "\n");
+                cabecalho.host = token;
+                printf("Host: %s\n", cabecalho.host);
+            }
+            if(!strcmp(token,"User-Agent")){
+                token = strtok(NULL, "\n");
+                cabecalho.user_agent = token;
+                printf("User-agent: %s\n", cabecalho.user_agent);
+            }
+            if(!strcmp(token,"Accept")){
+                token = strtok(NULL, "\n");
+                cabecalho.accept = token;
+                printf("Accept: %s\n", cabecalho.accept);
+            }
+            if(!strcmp(token,"Accept-Encoding")){
+                token = strtok(NULL, "\n");
+                cabecalho.accept_encoding = token;
+                printf("Accept-Encoding: %s\n", cabecalho.accept_encoding);
+            }
+            if(!strcmp(token,"Accept-Language")){
+                token = strtok(NULL, "\n");
+                cabecalho.accept_language = token;
+                printf("Accept-Language: %s\n", cabecalho.accept_language); 
+            }
+            if(!strcmp(token,"Cookie")){
+                token = strtok(NULL, "\n");
+                cabecalho.cookie = token;
+                printf("Cookie: %s\n", cabecalho.cookie); 
+            }
+            if(!strcmp(token,"Connection")){
+                token = strtok(NULL, "\n");
+                cabecalho.connection = token;
+                printf("Connection: %s\n", cabecalho.connection);
+            }
 
-        // copia o token para outro token a ser processado
-        strcpy(linha_cabecalho, token);       
+        }
 
-        /*token = strtok(NULL, "\n");
-        cabecalho.host = token;
-        printf("Host: %s\n", cabecalho.host);
-
-        token = strtok(NULL, "\n");
-        cabecalho.user_agent = token;
-        printf("User-agent: %s\n", cabecalho.user_agent);
-
-        token = strtok(NULL, "\n");
-        cabecalho.accept = token;
-        printf("Accept: %s\n", cabecalho.accept);
-
-        token = strtok(NULL, "\n");
-        cabecalho.accept_encoding = token;
-        printf("Accept-encoding: %s\n", cabecalho.accept_encoding);
-
-        token = strtok(NULL, "\n");
-        cabecalho.accept_language = token;
-        printf("Accept-language: %s\n", cabecalho.accept_language); 
-
-        token = strtok(NULL, "\n");
-        cabecalho.cookie = token;
-        printf("Cookie: %s\n", cabecalho.cookie);         
-
-        token = strtok(NULL, "\n");
-        cabecalho.connection = token;
-        printf("Connection: %s\n", cabecalho.connection);  */
+        close(new_accept_sock);
 
         /*
         if((strcmp(GET,"GET")!=0)|| ((strcmp(HTTP,"HTTP/1.0"))!= 0 && (strcmp(HTTP,"HTTP/1.1")))){
