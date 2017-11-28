@@ -105,7 +105,7 @@ int filtragem_url(char * url)
 	
 }
 void remove_http(char* url_http){
-	// recebe url com http://
+	// se recebe url com http:// remove, caso contrario ignora	
 	int contador = 6,i=0;
 
 	char url_www[100];
@@ -117,12 +117,6 @@ void remove_http(char* url_http){
 			url_www[i] = url_http[contador];
 			}
 			strcpy(url_http,url_www);
-	}else if(strnicmp(url_http,"https://",8)==0){
-		printf("\n ERRO nao eh  aceito https \n");
-		exit(0);
-	}else{
-		printf("Nao reconhecido o cabecalho \n");
-		exit(0);
 	}
 
 	
