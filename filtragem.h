@@ -7,12 +7,13 @@
 
 #define SIZE_LISTA 30
 #define MAX_STR 500
+#define MAX_DADO 6000
 
 FILE* abrindo_arquivo(char* nome_arquivo);
 int checkLists(char* nome_arquivo,char * mensagem);
-// talvez seja melhor receber a mensagem toda para que depois possa analizar o deny terms
 int  filtragem_url(char * url);
-void remove_http(char* url_http);
 int denyterms_request(char * request);
+int denyterms_body(char * request);
+FILE* abrindo_log(char* nome_arquivo);
 int * Length_denyterms(void);
-#endif
+void mensagem_log(char * url, int opcao);
