@@ -1,10 +1,10 @@
 default: compile
 
 compile:
-	gcc caching.c -o caching.out -lpthread
+	gcc proxyServer_Filipe.c -o proxyServer.out -lpthread
 
 clean:
 	rm *.out
 
 run:
-	./caching.out $(mode) $(port_number)
+	./proxyServer.out $(mode) $(port_number)
