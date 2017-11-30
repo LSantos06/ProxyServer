@@ -9,7 +9,7 @@
 #include<pthread.h>
 
 #define BACKLOG 20 // How many pending connections queue will hold
-#define BUFFER 1024 // Buffer size, máx message size
+#define BUFFER 32768 // Buffer size, máx message size
 
 // Header line list structure
 typedef struct headerList
@@ -167,11 +167,11 @@ void *connectionHandler(void *c_pNewSocketFD)
     puts("recv succeded");
 
     // Obtaining fields from request message
+    //puts(buffer);
     c_request = getRequestORResponseFields(buffer);
-    puts(buffer);
-    //printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
-    //printHeaderList(c_request->headers);
-    //printf("\nbody: %s\n\n",c_request->body);
+    printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
+    printHeaderList(c_request->headers);
+    printf("\nbody: %s\n\n",c_request->body);
  
 
     // Creating proxy client socket file descriptor
@@ -228,7 +228,6 @@ void *connectionHandler(void *c_pNewSocketFD)
 
     // Sending request message from proxy to www
     strcpy(buffer,getRequestORResponseMessage(c_request));
-    puts(buffer);
     if(aux = send(s_clientFD, buffer, strlen(buffer), 0) < 0) // write(s_clientFD, s_message, strlen(s_message)) == -1
     {
         puts("send failed");
@@ -245,15 +244,14 @@ void *connectionHandler(void *c_pNewSocketFD)
     puts("recv succeded");
 
     // Obtaining fields from response message
+    //puts(buffer);
     s_response = getRequestORResponseFields(buffer);
-    puts(buffer);
-    //printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
-    //printHeaderList(s_response->headers);
-    //printf("\nbody: %s\n\n",s_response->body);
+    printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
+    printHeaderList(s_response->headers);
+    printf("\nbody: %s\n\n",s_response->body);
 
     // Sending response mesage from proxy to browser client
     strcpy(buffer,getRequestORResponseMessage(s_response));
-    puts(buffer);
     if(aux = send(c_newSocketFD, buffer, strlen(buffer), 0) < 0) // write(c_newSocket, buffer, strlen(buffer)) == -1
     {
         puts("send failed");
@@ -342,7 +340,7 @@ char* getRequestORResponseMessage(RequestORResponse *requestORresponse)
     strcat(buffer, requestORresponse->urlORstatusCode);
     strcat(buffer, " ");
     strcat(buffer, requestORresponse->versionORphrase);
-    strcat(buffer, "\r\n");
+    strcat(buffer, "\n");
     for(auxHeaderList=requestORresponse->headers;auxHeaderList!=NULL;auxHeaderList=auxHeaderList->next)
     {
         strcat(buffer, auxHeaderList->headerFieldName);
