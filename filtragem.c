@@ -1,30 +1,43 @@
 #include "filtragem.h"
-/*
 int main()
 {
 	int i=0;
 	
 	
-	char v[100] = "http://www.youtube.com.br/watch?v=9EHeSjoDTU8";
+	char v[100] = "www.youtube.com.br/watch?v=9EHeSjoDTU8";
 	printf("\n====-==== COMECANDO ");
-	char v2[] = "http://www.pt.org.br/tag/fora-temer";
+	char v2[] = "www.pt.org.br/tag/fora-temer";
 	i=filtragem_url(v2);
 	printf("\n saida = %d ",i);
-	char v1[] = "http://www.google.com.br/search?ei=XCYKWvC0K4iHwgSs95jQAQ&q=fofInhos&oq=foFinhos&gs_";
+	mensagem_log(v2,1);
+	char v1[] = "www.google.com.br/search?ei=XCYKWvC0K4iHwgSs95jQAQ&q=fofInhos&oq=foFinhos&gs_";
 	i=filtragem_url(v1);
+	mensagem_log(v1,1);
 	printf("\n saida = %d ",i);
 	i=filtragem_url(v);
 	printf("\n saida = %d ",i);	
-	char w[]= "http://www.unb.br";
+	char w[]= "www.unb.br";
 	i=filtragem_url(w);
 	printf("\n saida = %d ",i);	
-	char g[] = "http://www.globo.br";
+	mensagem_log(w,1);
+	char g[] = "www.globo.br";
 	i=filtragem_url(g);
 	printf("\n saida = %d ",i);	
+	
+	char g22[] = "www.netflix.com.br";
+	i=filtragem_url(g22);
+	printf("\n saida = %d ",i);	
+	
+	char g23[] = "www.cic.unb.br";
+	i=filtragem_url(g23);
+	printf("\n saida = %d ",i);	
+	
+	
+	mensagem_log(g,0);
 	printf("\n FIM");
 	return i;
 }
-*/
+
 
 FILE* abrindo_arquivo(char* nome_arquivo){
   FILE *fp;
@@ -45,13 +58,16 @@ int checkLists(char* nome_arquivo,char * mensagem){
  	memset (procurado,'\0',strlen(mensagem));
 	strcpy (procurado,mensagem);
 	FILE * fp = abrindo_arquivo(nome_arquivo);
-
+	int aux;
 	while (i<SIZE_LISTA && fgets(lista[i],MAX_STR,fp)!=NULL)
 	{
-		//printf("\n%s lista[%d] = %s\n",procurado,i,lista[i]);
+		aux = strlen(lista[i])-2;
+			
+		if(strcmp("denyterms.txt",nome_arquivo)==0)
+			aux = (strlen(procurado));
+
 		
-		
-		if (strnicmp(procurado,lista[i],(strlen(lista[i])-1))==0)
+		if (strncmp(procurado,lista[i],aux)==0)
 		{
 			saida = 1;
 			
@@ -67,7 +83,7 @@ int filtragem_url(char * url)
 	/* NAO PRECISA MAIS ----------- CONSIDERANDO URL : www.<site>
 	// pre processamento do host ---- adicionando www.
 	char host_www[100];
-	if(strnicmp("www.",url,4) != 0)
+	if(strncmp("www.",url,4) != 0)
 	{
 	strcpy(host_www,url);
 	}
@@ -122,9 +138,11 @@ int denyterms_request(char * request){
 					aux_s[k] = request[i_aux];		
 				}
 			}		
-		
+		    
+			//printf("%s - %d quita\n",aux_s,strlen(aux_s));
 	       if (checkLists("denyterms.txt",aux_s))
 		 	{
+				 
 		 	//printf("\nDENTRO IF \t\t DEBUG == %s /// %d\n",aux_s,tamanho[j]);
 		 	free(aux_s);
 		 	free(tamanho);
@@ -188,10 +206,10 @@ int denyterms_body(char * body){
 			{
 				aux_s[k] = body[i_aux];		
 			}		
-		
+			
 	       if (checkLists("denyterms.txt",aux_s))
 		 	{
-		 	//printf("\nDENTRO IF \t\t DEBUG == %s /// %d\n",aux_s,tamanho[j]);
+		 	printf("\nDENTRO IF \t\t DEBUG == %s /// %d\n",aux_s,tamanho[j]);
 		 	free(aux_s);
 		 	free(tamanho);
 			 return 1;
@@ -228,13 +246,9 @@ void mensagem_log(char * url, int opcao){
 		arquivo = "AcceptLog.txt";
 		mensagem = "aceito";
 	}
-	char data[9];
-	char horas[9];
-	_strdate(data);
-	_strtime(horas);
 	FILE *fp = abrindo_log(arquivo);
-	fprintf(fp,"Data : %s  [%s] :: Request foi %s: %s \n",data,horas,mensagem,url);
 	
+	fprintf(fp,"Data : %s [%s] :: Request foi %s: %s \n",__DATE__,__TIME__ ,mensagem,url);
 	
 	mensagem = NULL;
 	arquivo = NULL;

@@ -1,0 +1,9 @@
+Data : O•ý30/HP•ýNov/2017  [13:01:32] :: Request foi aceito: www.pt.org.br/tag/fora-temer 
+Data : O•ý30/HP•ýNo O•ýNov2017/v2017  [13:01:32] :: Request foi aceito: www.google.com.br/search?ei=XCYKWvC0K4iHwgSs95jQAQ&q=fofInhos&oq=foFinhos&gs_ 
+Data : O•ý30/HP•ýNo0O•ýNov2017/v2017  [13:01:32] :: Request foi aceito: www.unb.br 
+Data : Nov 30 2017 [13:03:04] :: Request foi aceito: www.pt.org.br/tag/fora-temer 
+Data : Nov 30 2017 [13:03:04] :: Request foi aceito: www.google.com.br/search?ei=XCYKWvC0K4iHwgSs95jQAQ&q=fofInhos&oq=foFinhos&gs_ 
+Data : Nov 30 2017 [13:03:04] :: Request foi aceito: www.unb.br 
+Data : Nov 30 2017 [13:05:02] :: Request foi aceito: www.pt.org.br/tag/fora-temer 
+Data : Nov 30 2017 [13:05:02] :: Request foi aceito: www.google.com.br/search?ei=XCYKWvC0K4iHwgSs95jQAQ&q=fofInhos&oq=foFinhos&gs_ 
+Data : Nov 30 2017 [13:05:02] :: Request foi aceito: www.unb.br 
