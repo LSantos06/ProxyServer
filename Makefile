@@ -1,8 +1,10 @@
-default: compilar
+default: compile
 
-compilar:
-	gcc proxyServer.c -o proxy
-	gcc caching.c -o caching -lpthread
+compile:
+	gcc caching.c -o caching.out -lpthread
 
-rodar:
-	./proxy 50000
+clean:
+	rm *.out
+
+run:
+	./caching.out $(mode) $(port_number)
