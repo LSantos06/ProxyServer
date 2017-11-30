@@ -6,11 +6,11 @@ int main()
 	
 	char v[100] = "www.youtube.com.br/watch?v=9EHeSjoDTU8";
 	printf("\n====-==== COMECANDO ");
-	char v2[] = "www.pt.org.br/tag/fora-temer";
+	char v2[] = "pt.org.br/tag/fora-temer";
 	i=filtragem_url(v2);
 	printf("\n saida = %d ",i);
 	mensagem_log(v2,1);
-	char v1[] = "www.google.com.br/search?ei=XCYKWvC0K4iHwgSs95jQAQ&q=fofInhos&oq=foFinhos&gs_";
+	char v1[] = "google.com.br/search?ei=XCYKWvC0K4iHwgSs95jQAQ&q=fofInhos&oq=foFinhos&gs_";
 	i=filtragem_url(v1);
 	mensagem_log(v1,1);
 	printf("\n saida = %d ",i);
@@ -24,16 +24,22 @@ int main()
 	i=filtragem_url(g);
 	printf("\n saida = %d ",i);	
 	
-	char g22[] = "www.netflix.com.br";
+	char g22[] = "netflix.com.br";
 	i=filtragem_url(g22);
-	printf("\n saida = %d ",i);	
-	
-	char g23[] = "www.cic.unb.br";
+	printf("\n %s saida = %d ",g22,i);	
+		char g26[] = "netflix.com.br";
+	i=filtragem_url(g26);
+	printf("\n %s saida = %d ",g26,i);	
+
+	char g23[] = "cic.unb.br";
 	i=filtragem_url(g23);
-	printf("\n saida = %d ",i);	
+	printf("\n %s saida = %d ",g23,i);	
+	char g24[] = "cic.unb.br";
+	i=filtragem_url(g24);
+	printf("\n %s saida = %d ",g24,i);	
 	
 	
-	mensagem_log(g,0);
+	
 	printf("\n FIM");
 	return i;
 }
@@ -80,14 +86,17 @@ int checkLists(char* nome_arquivo,char * mensagem){
 //por enquanto retorna um int para indicar se ta ou nao ta proibido
 int filtragem_url(char * url)
 {
-	/* NAO PRECISA MAIS ----------- CONSIDERANDO URL : www.<site>
 	// pre processamento do host ---- adicionando www.
-	char host_www[100];
+	char host_www[500];
+	char www[504]= "www.";
 	if(strncmp("www.",url,4) != 0)
 	{
-	strcpy(host_www,url);
+		strcpy(host_www,url);
+		strcat(www,host_www);
+		strcpy(url,www);	
 	}
-	*/
+
+	
 	// primeiro verifica-se se esta na whiteList
 	int aux_white,aux_black,aux_deny;
 	aux_white = checkLists("whitelist.txt",url);
@@ -96,20 +105,24 @@ int filtragem_url(char * url)
 	aux_deny = denyterms_request(url);
 	if(aux_white){
 		printf("\n\tWHITE LIST OK --- ENCAMINHAR MENSAGEM %s \n",url);
+		mensagem_log(url,1);
 		return 1;
 	} // verificando se esta na lista negra
 	else if(aux_black){
 	   
 		printf("\n\tESTA NA BLACK LIST  --- REJEITAR MENSAGEM %s \n",url);
+		mensagem_log(url,0);
 		return 0;
 	 }// se nao tiver em nenhuma da lista deve-se procurar por termos proibidos
 	else if (aux_deny){
 	 	// se for 1 entao tem termos proibidos na url 
 		printf("\n\tdeny terms na URL  --- REJEITAR  MENSAGEM %s \n",url);
+		mensagem_log(url,1);
 		return 0;	
 	}else{
-			printf("\n\tNao eh proibido nem esta na white - ENCAMINHAR MENSAGEM %s \n",url);
-			return 1;
+		printf("\n\tNao eh proibido nem esta na white, nem tem deny terms na url - ENCAMINHAR MENSAGEM %s \n",url);
+		mensagem_log(url,0);
+		return 1;
 	}
 	
 	
@@ -234,12 +247,13 @@ FILE* abrindo_log(char* nome_arquivo){
  return fp;
 }
 
-void mensagem_log(char * url, int opcao){
-	// op == 0 -> rejeitado 
-	// op == 1 (!= 0) -> aceito
+void mensagem_log(char * get, char * url, int opcao){
+	// op == ERRO_LOG -> rejeitado 
+	// op == ACEPT_LOG (!= 0) -> aceito
+	
 	char * mensagem =(char *) malloc(10*sizeof(char)); 
 	char * arquivo =(char *) malloc(16*sizeof(char));
-	if (!opcao){
+	if (ERRO_LOG){
 		arquivo= "ErrorLog.txt";
 		mensagem = "rejeitado";
 	}else{
@@ -248,7 +262,7 @@ void mensagem_log(char * url, int opcao){
 	}
 	FILE *fp = abrindo_log(arquivo);
 	
-	fprintf(fp,"Data : %s [%s] :: Request foi %s: %s \n",__DATE__,__TIME__ ,mensagem,url);
+	fprintf(fp,"Data : %s [%s] :: %s Request foi %s: %s \n",__DATE__,__TIME__ ,get,mensagem,url);
 	
 	mensagem = NULL;
 	arquivo = NULL;

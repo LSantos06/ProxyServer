@@ -9,6 +9,8 @@
 #define SIZE_LISTA 30
 #define MAX_STR 500
 #define MAX_DADO 6000
+#define  ERRO_LOG -1
+#define ACCEPT_LOG 1
 
 FILE* abrindo_arquivo(char* nome_arquivo);
 int checkLists(char* nome_arquivo,char * mensagem);
