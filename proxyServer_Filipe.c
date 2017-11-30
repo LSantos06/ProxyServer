@@ -9,7 +9,7 @@
 #include<pthread.h>
 
 #define BACKLOG 20 // How many pending connections queue will hold
-#define BUFFER 1025 // Buffer size, máx message size + 1 (\0 space)
+#define BUFFER 1024 // Buffer size, máx message size
 
 // Header line list structure
 typedef struct headerList
@@ -41,7 +41,7 @@ void freeRequestORResponseFiedls(RequestORResponse*);
 HeaderList* createHeaderList();
 HeaderList* insertHeaderList(HeaderList*, char*, char*);
 int emptyHeaderList(HeaderList*);
-void deleteHeaderList(HeaderList*);
+void freeHeaderList(HeaderList*);
 void printHeaderList(HeaderList*);
 
 // Main
@@ -156,7 +156,7 @@ void *connectionHandler(void *c_pNewSocketFD)
     struct hostent *he;
     struct in_addr **addr_list;
     int aux = 0, contentLength = 0;
-    char buffer[BUFFER] = {0};
+    char buffer[BUFFER+1] = {0};
 
     // Receiving request message from browser client
     if(aux = recv(c_newSocketFD, buffer, sizeof(buffer),0) < 0) // read(c_newSocketFD, buffer, sizeof(buffer)) == -1
@@ -168,9 +168,11 @@ void *connectionHandler(void *c_pNewSocketFD)
 
     // Obtaining fields from request message
     c_request = getRequestORResponseFields(buffer);
-    printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
-    printHeaderList(c_request->headers);
-    printf("\nbody: %s\n\n",c_request->body);
+    puts(buffer);
+    //printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
+    //printHeaderList(c_request->headers);
+    //printf("\nbody: %s\n\n",c_request->body);
+ 
 
     // Creating proxy client socket file descriptor
     if ((s_clientFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1
@@ -190,7 +192,7 @@ void *connectionHandler(void *c_pNewSocketFD)
 
      // Finding header containing server host name
     for(auxHeaderList=c_request->headers;auxHeaderList!=NULL;auxHeaderList=auxHeaderList->next)
-    {        
+    {
         if(!strcmp(auxHeaderList->headerFieldName,"Host"))
             break;
     }
@@ -226,6 +228,7 @@ void *connectionHandler(void *c_pNewSocketFD)
 
     // Sending request message from proxy to www
     strcpy(buffer,getRequestORResponseMessage(c_request));
+    puts(buffer);
     if(aux = send(s_clientFD, buffer, strlen(buffer), 0) < 0) // write(s_clientFD, s_message, strlen(s_message)) == -1
     {
         puts("send failed");
@@ -243,12 +246,14 @@ void *connectionHandler(void *c_pNewSocketFD)
 
     // Obtaining fields from response message
     s_response = getRequestORResponseFields(buffer);
-    printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
-    printHeaderList(s_response->headers);
-    printf("\nbody: %s\n\n",s_response->body);
+    puts(buffer);
+    //printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
+    //printHeaderList(s_response->headers);
+    //printf("\nbody: %s\n\n",s_response->body);
 
     // Sending response mesage from proxy to browser client
     strcpy(buffer,getRequestORResponseMessage(s_response));
+    puts(buffer);
     if(aux = send(c_newSocketFD, buffer, strlen(buffer), 0) < 0) // write(c_newSocket, buffer, strlen(buffer)) == -1
     {
         puts("send failed");
@@ -257,8 +262,8 @@ void *connectionHandler(void *c_pNewSocketFD)
     puts("send succeded");
 
     // Deallocating used memory
-    freeRequestORResponseFiedls(c_request);
-    freeRequestORResponseFiedls(s_response);
+    //freeRequestORResponseFiedls(c_request);
+    //freeRequestORResponseFiedls(s_response);
     
     // Closing browser client socket
     close(c_newSocketFD);
@@ -281,15 +286,15 @@ RequestORResponse* getRequestORResponseFields(char *buffer)
     strcpy(auxBuffer,buffer);
     // Obtaining method
     pch = strtok(auxBuffer," ");
-    requestORresponse->methodORversion = (char *)malloc(strlen(pch)*sizeof(char));
+    requestORresponse->methodORversion = (char *)malloc(strlen(pch)*sizeof(char)+1);
     strcpy(requestORresponse->methodORversion,pch);
     // Obtainig url
     pch = strtok(NULL," ");
-    requestORresponse->urlORstatusCode = (char *)malloc(strlen(pch)*sizeof(char));
+    requestORresponse->urlORstatusCode = (char *)malloc(strlen(pch)*sizeof(char)+1);
     strcpy(requestORresponse->urlORstatusCode,pch);
     // Obtaining version
     pch = strtok(NULL,"\n");
-    requestORresponse->versionORphrase = (char *)malloc(strlen(pch)*sizeof(char));
+    requestORresponse->versionORphrase = (char *)malloc(strlen(pch)*sizeof(char)+1);
     strcpy(requestORresponse->versionORphrase,pch);
     // Obtaining list of headers
     requestORresponse->headers = createHeaderList();
@@ -315,7 +320,7 @@ RequestORResponse* getRequestORResponseFields(char *buffer)
     // If body not empty, obtaining it
     if(contentLength > 0)
     {
-        requestORresponse->body = (char *)malloc(contentLength*sizeof(char));
+        requestORresponse->body = (char *)malloc(contentLength*sizeof(char)+1);
         for(aux=0;aux<contentLength;aux++)
             requestORresponse->body[aux] = *((char*)(pch+2+aux));
         requestORresponse->body[aux] = '\0';
@@ -329,7 +334,7 @@ RequestORResponse* getRequestORResponseFields(char *buffer)
 // Obtains request/response message from fields
 char* getRequestORResponseMessage(RequestORResponse *requestORresponse)
 {
-    char *buffer = (char*)malloc(BUFFER*sizeof(char));
+    char *buffer = (char*)malloc(BUFFER*sizeof(char)+1);
     HeaderList *auxHeaderList = NULL;
 
     strcpy(buffer, requestORresponse->methodORversion);
@@ -337,15 +342,15 @@ char* getRequestORResponseMessage(RequestORResponse *requestORresponse)
     strcat(buffer, requestORresponse->urlORstatusCode);
     strcat(buffer, " ");
     strcat(buffer, requestORresponse->versionORphrase);
-    strcat(buffer, "\n");
+    strcat(buffer, "\r\n");
     for(auxHeaderList=requestORresponse->headers;auxHeaderList!=NULL;auxHeaderList=auxHeaderList->next)
     {
         strcat(buffer, auxHeaderList->headerFieldName);
         strcat(buffer, ": ");
         strcat(buffer, auxHeaderList->value);
-        strcat(buffer, "\n");
+        strcat(buffer, "\r\n");
     }
-    strcat(buffer, "\n");
+    strcat(buffer, "\r\n");
     if(requestORresponse->body != NULL)
         strcat(buffer, requestORresponse->body);
 
@@ -358,7 +363,7 @@ void freeRequestORResponseFiedls(RequestORResponse *requestORresponse)
     free(requestORresponse->methodORversion);
     free(requestORresponse->urlORstatusCode);
     free(requestORresponse->versionORphrase);
-    deleteHeaderList(requestORresponse->headers);
+    freeHeaderList(requestORresponse->headers);
     free(requestORresponse->body);
     free(requestORresponse);
 
@@ -379,9 +384,9 @@ HeaderList* insertHeaderList(HeaderList *list, char *headerFieldName, char *valu
 	HeaderList *aux = NULL;
 	HeaderList *new = (HeaderList *)malloc(sizeof(HeaderList));
 
-    new->headerFieldName = (char *)malloc(strlen(headerFieldName)*sizeof(char));
+    new->headerFieldName = (char *)malloc(strlen(headerFieldName)*sizeof(char)+1);
     strcpy(new->headerFieldName,headerFieldName);
-    new->value = (char *)malloc(strlen(value)*sizeof(char));
+    new->value = (char *)malloc(strlen(value)*sizeof(char)+1);
     strcpy(new->value,value);
     new->next = NULL;
     if(list != NULL)
@@ -405,11 +410,11 @@ int emptyHeaderList(HeaderList *list)
 }
 
 // Deallocates list
-void deleteHeaderList(HeaderList *list)
+void freeHeaderList(HeaderList *list)
 {
     if(!emptyHeaderList(list))
     {
-        deleteHeaderList(list->next);
+        freeHeaderList(list->next);
         free(list);
     }
 }
