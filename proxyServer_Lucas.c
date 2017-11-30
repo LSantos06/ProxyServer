@@ -55,10 +55,25 @@ typedef struct campos_header{
 
 int main(int argc, char* argv[]){
 
-    if(argc < 2){
-        perror("Para executar ./proxy <numero_da_porta> \n Lembrando que eh porta utilizada pelo IP do LoopBack");
-        exit(-1);
+    if(argc < 3){
+        perror("Para executar ./proxy <modo> <numero_da_porta> \n Lembrando que eh porta utilizada pelo IP do LoopBack");
+        exit(EXIT_FAILURE);
     }
+
+    if(!strcmp(argv[1],"-i")){
+        printf("INSPECAO\n");
+    }
+    else if(!strcmp(argv[1],"-f")){
+        printf("FILTRAGEM\n");
+    }
+    else if(!strcmp(argv[1],"-c")){
+        printf("CACHE\n");
+    }
+    else{
+        printf("invalid argument %s\n", argv[1]);
+        exit(EXIT_FAILURE);
+    }
+
 
     printf("\n=_=_=_=_=_=_=_=_\n");
     printf("Comecando a escutar a conexao\n");
