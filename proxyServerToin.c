@@ -6,10 +6,10 @@ int main(int argc, char* argv[])
 
     if(argc < 2){
         perror("Para executar ./proxy <numero_da_porta> \n Lembrando que eh porta utilizada pelo IP do LoopBack");
-        exit(-1);
+        exit(erro_porta);
     }
 
-    printf("\n=_=_=_=_=_=_=_=_\n");
+    printf("\n=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_\n");
     printf("Comecando a escutar a conexao\n");
      /* Instanciacao dos campos do cabecalho, requisicao e dados */
     char buffer[BUFFER_SIZE];
@@ -41,22 +41,22 @@ int main(int argc, char* argv[])
     int num_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if(num_socket < 0){
         perror("Socket nao valido, valor negativo retornado");
-        exit(-2);
+        exit(erro_socket);
     }
     // Optional: helps in reuse of address and port, prevents error such as “address already in use”
     if(setsockopt(num_socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &c_opt, sizeof(c_opt)) < 0) // == -1
     {
-        perror("setsockopt failed");
-        exit(3654);
+        perror("Set Sock Opt failhou");
+        exit(erro_opt);
     }
-    puts("setsockport Sucesso");
+   
     /* Associando uma porta a socket */
     // int bind(int sockfd, struct sockaddr *my_addr, int addrlen);
     //  - retorna negativo se der erro 
     int auxERRO = bind(num_socket,(struct sockaddr *)&server_end,sizeof(server_end));
     if(auxERRO < 0){
         perror("Erro ao associar porta, valor negativo retornado");
-        exit(-3);
+        exit(erro_bind);
     }       
     puts("Bind foi um Sucesso");
     /* Preparaco para conexoes */
@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
     auxERRO = listen(num_socket,BACKLOG);
     if(auxERRO < 0){
         perror("Erro ao escutar a porta, valor negativo retornado");
-        exit(-4);
+        exit(erro_list);
     }       
     //---------------------------------------------//
     puts("Pronto para começar a escutar conexoes \n");
@@ -76,14 +76,14 @@ int main(int argc, char* argv[])
     	auxERRO = pthread_create(&thre[i], NULL,&connectionHandler,&num_socket);
     	if(auxERRO < 0){
 	       printf("Erro nas threads");
-	        exit(-4);
+	        exit(erro_thr);
    	 	} 
    		 i++;
     }
     for (i = 0; i < 5; i++) {
     	pthread_join(thre[i], NULL);
   	}
-      puts("Pronto para começar a escutar conexoes \n"); 
+      printf("\n [%d] Pronto para começar a escutar conexoes \n",i); 
 
 return 0;
 }
@@ -99,14 +99,13 @@ void *connectionHandler(void *c_pNewSocketFD)
    	 newSocketFD = accept((*(int*)c_pNewSocketFD), (struct sockaddr *)&cliente,&tamanho);
    	 if(newSocketFD < 0)
    	 {
-   	 	perror("Erro ao aceitar \n\n \r");
-   	 	exit(-6);
-   	 }else
-   	 {
+   	 	perror("Erro ao aceitar \n\n");
+   	 	
+   	 }else{
    	 	printf("Conexao aceita e estabelecida \n");
    	 	handle_cliente(newSocketFD);
    	 }
-   	 printf("Esperando outras conexoes \n");
+   	 printf("\n\n Esperando outras conexoes \n");
    	}	
 }
 
@@ -123,9 +122,13 @@ void handle_cliente(int client_socket_fd) {
 	if(dado < 0){
 		perror("Erro ao receber dados \n");
 		close(client_socket_fd);
-		exit(-8);
-	}
-	printf("Received request:\n, %s, \n",buffer);
+		return;
+	}if(dado == 0){
+    perror("Cliente encerrou a conexao, sem dados \n");
+  }
+
+	printf("Received request:\n");
+  puts(buffer);
 	char * aux = strdup(buffer);
 	c_request = getRequestORResponseFields(aux);
     printf("\n\n------------------------------------");
@@ -137,13 +140,14 @@ void handle_cliente(int client_socket_fd) {
      ((strncmp("HTTP/1.0",c_request->versionORphrase,8) != 0) && (strncmp("HTTP/1.1",c_request->versionORphrase,8) != 0)))
  	{   
  		memset(buffer,0,BUFFER_SIZE);
- 		puts(c_request->methodORversion);
- 		puts(c_request->versionORphrase);
+ 		printf("Method %s\n",c_request->methodORversion);
+ 		printf("Versao %s\n",c_request->versionORphrase);
        	sprintf(buffer,"405 Metodo errado");
      	printf("Metodo errado\n");
      	send(client_socket_fd, buffer, strlen(buffer), 0);
   	 	close(client_socket_fd);
-  	 	exit(765432);
+      return;
+  	 	
  	}
  	// pegando o valor da url em si 
  	char URL[BUFFER_SIZE],requestHTTP[BUFFER_SIZE],host_request[BUFFER_SIZE];
@@ -210,21 +214,25 @@ RequestORResponse* getRequestORResponseFields(char *buffer)
     requestORresponse->headers = createHeaderList();
     while(pch != NULL)
     {
-        pch = strtok(NULL," ");
-        if(pch[1] == '\n')
-        {
-            pch[strlen(pch)] = ' ';
-            break;
-        }
-        pch[strlen(pch)-1] = '\0';
-        pch2 = pch;
-        pch = strtok(NULL,"\n");
-        pch[strlen(pch)-1] = '\0';
-        if(pch != NULL)
-            requestORresponse->headers = insertHeaderList(requestORresponse->headers,pch2,pch);
-        // Saving body length if necessary
-        if(!strcmp(pch2,"Content-Length"))
-            contentLength = atoi(pch);
+      pch = strtok(NULL," ");
+      if(pch != NULL){
+            
+         
+          if(pch[1] == '\n')
+          {
+              pch[strlen(pch)] = ' ';
+              break;
+          }
+          pch[strlen(pch)-1] = '\0';
+          pch2 = pch;
+          pch = strtok(NULL,"\n");
+          pch[strlen(pch)-1] = '\0';
+          if(pch != NULL)
+              requestORresponse->headers = insertHeaderList(requestORresponse->headers,pch2,pch);
+          // Saving body length if necessary
+          if(!strcmp(pch2,"Content-Length"))
+              contentLength = atoi(pch);
+      }
     }
 
     // If body not empty, obtaining it
@@ -373,7 +381,7 @@ void do_proxy(char* host, char buffer[], int client_socket_fd){
        {
        		perror("Envio erro, valor negativo retornado");
       		memset(buffer,0,BUFFER_SIZE);
-       		sprintf(buffer,"Errorrr 500");
+       		sprintf(buffer,"Error 500");
        		send(client_socket_fd, buffer, strlen(buffer), 0);
   	   		close(client_socket_fd);
        		return;
@@ -385,17 +393,18 @@ void do_proxy(char* host, char buffer[], int client_socket_fd){
 	       	decodifica_status(buffer,dec_status);
 	       	primeira_vez = 0;
 	       	int ver_ax = verifica_status(dec_status);
-	       if(ver_ax == 0){
-	       		memset(buffer,0,BUFFER_SIZE);
-       			sprintf(buffer,"%s \n", dec_1_linha);
-       			printf("Taqui\n");
-       			puts(buffer);
-       			send(client_socket_fd, buffer, strlen(buffer), 0);
-  	   			close(client_socket_fd);
-  	   			return;
+	        if(ver_ax == 0){
+	         		memset(buffer,0,BUFFER_SIZE);
+       		 	  sprintf(buffer, "%s\n", dec_1_linha);
+       		   	printf("Taqui\n");
+              puts(dec_1_linha);
+       			  puts(buffer);
+       			  send(client_socket_fd, buffer, strlen(buffer), 0);
+  	   			  close(client_socket_fd);
+  	   	  return;
 	       }
        	}
-       	 if(send(client_socket_fd,buffer,strlen(buffer),0)){
+       	 if(send(client_socket_fd,buffer,strlen(buffer),0) < 0){
        		perror("Envio erro, valor negativo retornado");
        		puts(buffer);
        		sprintf(buffer,"Error 503");
@@ -406,6 +415,7 @@ void do_proxy(char* host, char buffer[], int client_socket_fd){
        	if(!bytes_rcv){
        		printf("Nao tem mais dados acabou conexao");
        		memset(buffer,0,BUFFER_SIZE);
+          return;
        	}
 
 
@@ -438,8 +448,8 @@ void decodifica_status(char * buffer,char * p_linha)
 
 int verifica_status(char * p_code){
 	if(p_code[0] == '2'){
-		printf("FGHJKJHGFDSDFGBNM,MNBVCX\n");
-		printf("%c\n",p_code[0]);
+		//printf("FGHJKJHGFDSDFGBNM,MNBVCX\n");
+	 //	printf("%c\n",p_code[0]);
 		return 1;
 	}else{
 		return 0;

@@ -19,6 +19,15 @@
     -6 = erro dados
 */
 
+#define erro_porta -1
+#define erro_socket -2
+#define erro_opt -3
+#define erro_bind -3
+#define erro_list -4
+#define erro_acc -5
+#define erro_dados -6
+#define erro_thr -7
+
 //TODO: DEFINIR BACKLOG E TAMBEM SE TERA UMA PORTA PADRAO OU NAO
 
 // numero de conexoes pendentes na fila
@@ -26,7 +35,7 @@
 
 //TODO: Alocacao dinamica
 // tamanho do buffer
-#define BUFFER_SIZE 6000
+#define BUFFER_SIZE 65480
 
 typedef struct headerList
 {
