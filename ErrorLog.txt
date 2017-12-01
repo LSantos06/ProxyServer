@@ -1,0 +1,4 @@
+Data : O•ý30/HP•ýNoPO•ýNov2017/v2017  [13:01:32] :: Request foi rejeitado: www.globo.br 
+Data : Nov 30 2017 [13:03:04] :: Request foi rejeitado: www.globo.br 
+Data : Nov 30 2017 [13:05:02] :: Request foi rejeitado: www.globo.br 
+Data : Nov 30 2017 [14:39:02] :: Request foi rejeitado: www.globo.br 
