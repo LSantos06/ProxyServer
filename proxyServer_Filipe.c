@@ -2,6 +2,7 @@
 #include<stdlib.h>
 #include<sys/socket.h>
 #include<netinet/in.h>
+#include<netinet/tcp.h>
 #include<netdb.h>
 #include<arpa/inet.h>
 #include<string.h>
@@ -119,10 +120,10 @@ int main(int argc, char *argv[])
         *c_pNewSocketFD = c_newSocketFD;
         if(pthread_create(&p_snifferThread, NULL, connectionHandler, (void*)c_pNewSocketFD) != 0)
         {
-            perror("pthread_create failed");
+            printf("pthread_create failed | %d\n",c_newSocketFD);
             exit(EXIT_FAILURE);
         }
-        puts("pthread_create succeded");
+        printf("pthread_create succeded | %d\n",c_newSocketFD);
 
         // Now join the thread , so that we dont terminate before the thread
         //pthread_join(p_snifferThread, NULL);
@@ -148,7 +149,7 @@ void *connectionHandler(void *c_pNewSocketFD)
     int c_newSocketFD = *(int*)c_pNewSocketFD;
     RequestORResponse *c_request = NULL;
     // s_: about proxy-server interface (proxy is client)
-    int s_clientFD = 0, s_opt = 1;
+    int s_clientFD = 0, s_opt = 1, s_yes = 1, s_idle = 1, s_interval = 1, s_maxpkt = 10;
     RequestORResponse *s_response = NULL;
     struct sockaddr_in s_serverAddr;
     // Common variables
@@ -159,116 +160,136 @@ void *connectionHandler(void *c_pNewSocketFD)
     char buffer[BUFFER+1] = {0};
 
     // Receiving request message from browser client
-    if(aux = recv(c_newSocketFD, buffer, sizeof(buffer),0) < 0) // read(c_newSocketFD, buffer, sizeof(buffer)) == -1
+    if((aux = recv(c_newSocketFD, buffer, sizeof(buffer),0)) < 0) // read(c_newSocketFD, buffer, sizeof(buffer)) == -1
     {
-        puts("recv failed");
+        printf("recv failed 1 | %d\n",c_newSocketFD);
         exit(EXIT_FAILURE);
     }
-    puts("recv succeded");
+    printf("recv succeded 1 | %d\n",c_newSocketFD);
 
-    // Obtaining fields from request message
-    //puts(buffer);
-    c_request = getRequestORResponseFields(buffer);
-    printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
-    printHeaderList(c_request->headers);
-    printf("\nbody: %s\n\n",c_request->body);
- 
-
-    // Creating proxy client socket file descriptor
-    if ((s_clientFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1
+    if(aux > 0) // != 0
     {
-        perror("socket failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("socket succeded");
+        // Obtaining fields from request message
+        //puts(buffer);
+        c_request = getRequestORResponseFields(buffer);
+        printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
+        printHeaderList(c_request->headers);
+        printf("\nbody: %s\n\n",c_request->body);
 
-    // Optional: helps in reuse of address and port, prevents error such as “address already in use”
-    if(setsockopt(s_clientFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &s_opt, sizeof(s_opt)) < 0) // == -1
-    {
-        perror("setsockopt failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("setsockport succeded");
-
-     // Finding header containing server host name
-    for(auxHeaderList=c_request->headers;auxHeaderList!=NULL;auxHeaderList=auxHeaderList->next)
-    {
-        if(!strcmp(auxHeaderList->headerFieldName,"Host"))
-            break;
-    }
-
-    // Requesting host name corresponding IP list
-    if((he = gethostbyname(auxHeaderList->value)) == NULL)
-    {
-        herror("gethostbyname failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("gethostbyname succeded");
-
-    // Preparing www server sockaddr_in structure
-    s_serverAddr.sin_family = AF_INET;
-    s_serverAddr.sin_port = htons(80);
-
-    // Searching through IP list and requesting proxy-server connection
-    addr_list = (struct in_addr **) he->h_addr_list;
-    for(aux = 0; addr_list[aux] != NULL; aux++) 
-    {
-        s_serverAddr.sin_addr.s_addr = inet_addr(inet_ntoa(*addr_list[aux]));
-        if(connect(s_clientFD, (struct sockaddr *)&s_serverAddr, sizeof(struct sockaddr_in)) >= 0) // != -1
+        // Creating proxy client socket file descriptor
+        if ((s_clientFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1
         {
-            puts("connect succeded");
-            break;
+            printf("socket failed | %d\n",c_newSocketFD);
+            exit(EXIT_FAILURE);
         }
-    }
-    if(addr_list[aux] == NULL)
-    {
-        puts("connect failed");
-        exit(EXIT_FAILURE);
+        printf("socket succeded | %d\n",c_newSocketFD);
+
+        // Optional: helps in reuse of address and port, prevents error such as “address already in use”
+        if(setsockopt(s_clientFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &s_opt, sizeof(s_opt)) < 0) // == -1
+        {
+            printf("setsockopt failed | %d\n",c_newSocketFD);
+            exit(EXIT_FAILURE);
+        }
+        printf("setsockport succeded | %d\n",c_newSocketFD);
+
+        // Finding header containing server host name
+        for(auxHeaderList = c_request->headers;auxHeaderList != NULL;auxHeaderList = auxHeaderList->next)
+        {
+            if(!strcmp(auxHeaderList->headerFieldName,"Host"))
+                break;
+        }
+
+        // Requesting host name corresponding IP list
+        if((he = gethostbyname(auxHeaderList->value)) == NULL)
+        {
+            printf("gethostbyname failed | %d\n",c_newSocketFD);
+            exit(EXIT_FAILURE);
+        }
+        printf("gethostbyname succeded | %d\n",c_newSocketFD);
+
+        // Preparing www server sockaddr_in structure
+        s_serverAddr.sin_family = AF_INET;
+        s_serverAddr.sin_port = htons(80);
+
+        // Searching through IP list and requesting proxy-server connection
+        addr_list = (struct in_addr **) he->h_addr_list;
+        for(aux = 0; addr_list[aux] != NULL; aux++) 
+        {
+            s_serverAddr.sin_addr.s_addr = inet_addr(inet_ntoa(*addr_list[aux]));
+            if(connect(s_clientFD, (struct sockaddr *)&s_serverAddr, sizeof(struct sockaddr_in)) >= 0) // != -1
+            {
+                printf("connect succeded | %d\n",c_newSocketFD);
+                break;
+            }
+        }
+        if(addr_list[aux] == NULL)
+        {
+            printf("connect failed | %d\n",c_newSocketFD);
+            exit(EXIT_FAILURE);
+        }
+
+        // Sending request message from proxy to www
+        strcpy(buffer,getRequestORResponseMessage(c_request));
+        if((aux = send(s_clientFD, buffer, strlen(buffer), 0)) < 0) // write(s_clientFD, s_message, strlen(s_message)) == -1
+        {
+            printf("send failed 1 | %d\n",c_newSocketFD);
+            exit(EXIT_FAILURE);
+        }
+        printf("send succeded 1 | %d\n",c_newSocketFD);
+
+        // Receiving response message from www server
+        if((aux = recv(s_clientFD, buffer, sizeof(buffer), 0)) < 0) // read(s_clientFD, buffer, sizeof(s_buffer) == -1
+        {
+            printf("recv failed 2 | %d\n",c_newSocketFD);
+            exit(EXIT_FAILURE);
+        }
+        printf("recv succeded 2 | %d\n",c_newSocketFD);
+
+        //
+        while((aux = recv(s_clientFD, buffer, sizeof(buffer), 0)) > 0) // read(s_clientFD, buffer, sizeof(s_buffer)) != -1 && != 0
+        {
+            printf("recv succeded 3 | %d\n",c_newSocketFD);getchar();
+            // PROBLEMA AQUI!
+            strcat(s_response->body,buffer);
+        }
+        if(aux < 0) // == -1
+        {
+            printf("recv failed 3 | %d\n",c_newSocketFD);
+            exit(EXIT_FAILURE);
+        }
+
+        // Obtaining fields from response message
+        //puts(buffer);
+        if(aux > 0) // != 0
+        {
+            s_response = getRequestORResponseFields(buffer);
+            printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
+            printHeaderList(s_response->headers);     
+            printf("\nbody: %s\n\n",s_response->body);
+            strcpy(buffer,getRequestORResponseMessage(s_response));
+        }
+
+        // Sending response mesage from proxy to browser client
+        if(aux = send(c_newSocketFD, buffer, strlen(buffer), 0) < 0) // write(c_newSocket, buffer, strlen(buffer)) == -1
+        {
+            printf("send failed 2 | %d\n",c_newSocketFD);
+            exit(EXIT_FAILURE);
+        }
+        printf("send succeded 2 | %d\n",c_newSocketFD);
+
+        // Deallocating used memory
+        //freeRequestORResponseFiedls(c_request);
+        //freeRequestORResponseFiedls(s_response);
     }
 
-    // Sending request message from proxy to www
-    strcpy(buffer,getRequestORResponseMessage(c_request));
-    if(aux = send(s_clientFD, buffer, strlen(buffer), 0) < 0) // write(s_clientFD, s_message, strlen(s_message)) == -1
-    {
-        puts("send failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("send succeded");
-
-    // Receiving response message from www server
-    if(aux = recv(s_clientFD, buffer, sizeof(buffer), 0) < 0) // read(s_clientFD, buffer, sizeof(s_buffer)) == -1
-    {
-        puts("recv failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("recv succeded");
-
-    // Obtaining fields from response message
-    //puts(buffer);
-    s_response = getRequestORResponseFields(buffer);
-    printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
-    printHeaderList(s_response->headers);
-    printf("\nbody: %s\n\n",s_response->body);
-
-    // Sending response mesage from proxy to browser client
-    strcpy(buffer,getRequestORResponseMessage(s_response));
-    if(aux = send(c_newSocketFD, buffer, strlen(buffer), 0) < 0) // write(c_newSocket, buffer, strlen(buffer)) == -1
-    {
-        puts("send failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("send succeded");
-
-    // Deallocating used memory
-    //freeRequestORResponseFiedls(c_request);
-    //freeRequestORResponseFiedls(s_response);
-    
     // Closing browser client socket
     close(c_newSocketFD);
 
     //Free the socket pointer
     free(c_pNewSocketFD);
-     
+    
+    printf("end | %d\n",c_newSocketFD);
+
     return NULL;
 }
 
