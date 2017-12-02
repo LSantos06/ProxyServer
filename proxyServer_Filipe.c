@@ -8,6 +8,7 @@
 #include<string.h>
 #include<unistd.h>
 #include<pthread.h>
+#include "filtragem.h"
 
 #define BACKLOG 20 // How many pending connections queue will hold
 #define BUFFER 32768 // Buffer size, máx message size
@@ -37,6 +38,7 @@ void *connectionHandler(void *);
 RequestORResponse* getRequestORResponseFields(char*);
 char* getRequestORResponseMessage(RequestORResponse*);
 void freeRequestORResponseFiedls(RequestORResponse*);
+char * search_host(RequestORResponse * c_request);
 
 // HeaderList function headers
 HeaderList* createHeaderList();
@@ -175,6 +177,23 @@ void *connectionHandler(void *c_pNewSocketFD)
         printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
         printHeaderList(c_request->headers);
         printf("\nbody: %s\n\n",c_request->body);
+
+        char * aux_host = search_host(c_request);
+        printf("aux host -- %s\n",aux_host );
+        // filtragem_url --> 0 ta na black list ou tem deny terms
+        // se 1 -> esta white list    
+        printf("filtragem %d ",filtragem_url(aux_host));
+        printf("Fazendo a filtragem ......\n");
+        if(filtragem_url == 0){
+               // EM TESE EH PROIBIDO  
+               printf("Host esta na black list ou contem termos proibidos na URL\n"); 
+               printf("Fechando conexao\n"); 
+               memset(buffer,0,BUFFER);
+               sprintf(buffer, "403 Forbidden.\n");
+               send(c_newSocketFD, buffer, strlen(buffer), 0);
+               close(c_newSocketFD);  
+               exit(EXIT_FAILURE); 
+         }  
 
         // Creating proxy client socket file descriptor
         if ((s_clientFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1
@@ -447,3 +466,13 @@ void printHeaderList(HeaderList *list)
         printHeaderList(list->next);
     }
 }
+char * search_host(RequestORResponse * c_request){
+    HeaderList *auxHeaderList = NULL;
+
+    for(auxHeaderList = c_request->headers;auxHeaderList != NULL;auxHeaderList = auxHeaderList->next)
+     {
+            if(!strcmp(auxHeaderList->headerFieldName,"Host"))
+               return auxHeaderList->value;
+     }
+     return NULL;
+} 
