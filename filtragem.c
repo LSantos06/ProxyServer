@@ -1,4 +1,8 @@
 #include "filtragem.h"
+
+#define ERRO_LOG -1
+#define ACC_LOG 1
+/*
 int main()
 {
 	int i=0;
@@ -43,7 +47,7 @@ int main()
 	printf("\n FIM");
 	return i;
 }
-
+*/
 
 FILE* abrindo_arquivo(char* nome_arquivo){
   FILE *fp;
@@ -105,23 +109,23 @@ int filtragem_url(char * url)
 	aux_deny = denyterms_request(url);
 	if(aux_white){
 		printf("\n\tWHITE LIST OK --- ENCAMINHAR MENSAGEM %s \n",url);
-		mensagem_log(url,1);
+		mensagem_log(url,ACC_LOG);
 		return 1;
 	} // verificando se esta na lista negra
 	else if(aux_black){
 	   
 		printf("\n\tESTA NA BLACK LIST  --- REJEITAR MENSAGEM %s \n",url);
-		mensagem_log(url,0);
+		mensagem_log(url,ERRO_LOG);
 		return 0;
 	 }// se nao tiver em nenhuma da lista deve-se procurar por termos proibidos
 	else if (aux_deny){
 	 	// se for 1 entao tem termos proibidos na url 
 		printf("\n\tdeny terms na URL  --- REJEITAR  MENSAGEM %s \n",url);
-		mensagem_log(url,1);
+		mensagem_log(url,ERRO_LOG);
 		return 0;	
 	}else{
 		printf("\n\tNao eh proibido nem esta na white, nem tem deny terms na url - ENCAMINHAR MENSAGEM %s \n",url);
-		mensagem_log(url,0);
+		mensagem_log(url,ACC_LOG);
 		return 1;
 	}
 	
@@ -155,7 +159,7 @@ int denyterms_request(char * request){
 			//printf("%s - %d quita\n",aux_s,strlen(aux_s));
 	       if (checkLists("denyterms.txt",aux_s))
 		 	{
-				 
+		 
 		 	//printf("\nDENTRO IF \t\t DEBUG == %s /// %d\n",aux_s,tamanho[j]);
 		 	free(aux_s);
 		 	free(tamanho);
@@ -247,13 +251,13 @@ FILE* abrindo_log(char* nome_arquivo){
  return fp;
 }
 
-void mensagem_log(char * get, char * url, int opcao){
+void mensagem_log(char * url, int opcao){
 	// op == ERRO_LOG -> rejeitado 
 	// op == ACEPT_LOG (!= 0) -> aceito
 	
 	char * mensagem =(char *) malloc(10*sizeof(char)); 
 	char * arquivo =(char *) malloc(16*sizeof(char));
-	if (ERRO_LOG){
+	if (opcao == ERRO_LOG){
 		arquivo= "ErrorLog.txt";
 		mensagem = "rejeitado";
 	}else{
@@ -262,7 +266,7 @@ void mensagem_log(char * get, char * url, int opcao){
 	}
 	FILE *fp = abrindo_log(arquivo);
 	
-	fprintf(fp,"Data : %s [%s] :: %s Request foi %s: %s \n",__DATE__,__TIME__ ,get,mensagem,url);
+	fprintf(fp,"Data : %s [%s] :: Request foi %s: %s \n",__DATE__,__TIME__ ,mensagem,url);
 	
 	mensagem = NULL;
 	arquivo = NULL;
