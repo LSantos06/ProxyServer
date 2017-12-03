@@ -39,7 +39,7 @@ RequestORResponse* getRequestORResponseFields(char*);
 char* getRequestORResponseMessage(RequestORResponse*);
 void freeRequestORResponseFiedls(RequestORResponse*);
 
-
+    
 // HeaderList function headers
 HeaderList* createHeaderList();
 HeaderList* insertHeaderList(HeaderList*, char*, char*);
@@ -183,10 +183,6 @@ void *connectionHandler(void *c_pNewSocketFD)
         if ((s_clientFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1
         {
             printf("socket failed | %d\n",c_newSocketFD);
-             memset(buffer,0,BUFFER);
-             sprintf(buffer, " FALHA NA SOCKET.\n");
-             send(c_newSocketFD, buffer, strlen(buffer), 0);
-             close(c_newSocketFD);  
              exit(EXIT_FAILURE);
         }
         printf("socket succeded | %d\n",c_newSocketFD);
@@ -195,10 +191,7 @@ void *connectionHandler(void *c_pNewSocketFD)
         if(setsockopt(s_clientFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &s_opt, sizeof(s_opt)) < 0) // == -1
         {
             printf("setsockopt failed | %d\n",c_newSocketFD);
-            memset(buffer,0,BUFFER);
-            sprintf(buffer, " FALHA NA SOCKET Opt.\n");
-            send(c_newSocketFD, buffer, strlen(buffer), 0);
-            close(c_newSocketFD);
+            exit(EXIT_FAILURE);
         }
         printf("setsockport succeded | %d\n",c_newSocketFD);
 
@@ -227,10 +220,6 @@ void *connectionHandler(void *c_pNewSocketFD)
         if((he = gethostbyname(auxHeaderList->value)) == NULL)
         {
             printf("gethostbyname failed | %d\n",c_newSocketFD);
-            memset(buffer,0,BUFFER);
-            sprintf(buffer, "404 Not Found.\n");
-            send(c_newSocketFD, buffer, strlen(buffer), 0);
-            close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("gethostbyname succeded | %d\n",c_newSocketFD);
@@ -253,10 +242,6 @@ void *connectionHandler(void *c_pNewSocketFD)
         if(addr_list[aux] == NULL)
         {
             printf("connect failed | %d\n",c_newSocketFD);
-            memset(buffer,0,BUFFER);
-             sprintf(buffer, " FALHA NA CONEXAO.\n");
-             send(c_newSocketFD, buffer, strlen(buffer), 0);
-             close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
 
@@ -265,10 +250,6 @@ void *connectionHandler(void *c_pNewSocketFD)
         if((aux = send(s_clientFD, buffer, strlen(buffer), 0)) < 0) // write(s_clientFD, s_message, strlen(s_message)) == -1
         {
             printf("send failed 1 | %d\n",c_newSocketFD);
-            memset(buffer,0,BUFFER);
-             sprintf(buffer, " FALHA AO ENVIAR.\n");
-             send(c_newSocketFD, buffer, strlen(buffer), 0);
-             close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("send succeded 1 | %d\n",c_newSocketFD);
@@ -277,11 +258,6 @@ void *connectionHandler(void *c_pNewSocketFD)
         if((aux = recv(s_clientFD, buffer, sizeof(buffer), 0)) < 0) // read(s_clientFD, buffer, sizeof(s_buffer) == -1
         {
             printf("recv failed 2 | %d\n",c_newSocketFD);
-             printf("send failed 1 | %d\n",c_newSocketFD);
-            memset(buffer,0,BUFFER);
-             sprintf(buffer, " FALHA AO ENVIAR.\n");
-             send(c_newSocketFD, buffer, strlen(buffer), 0);
-             close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("recv succeded 2 | %d\n",c_newSocketFD);
@@ -322,11 +298,6 @@ void *connectionHandler(void *c_pNewSocketFD)
         if(aux < 0) // == -1
         {
             printf("recv failed 3 | %d\n",c_newSocketFD);
-            printf("send failed 1 | %d\n",c_newSocketFD);
-            memset(buffer,0,BUFFER);
-            sprintf(buffer, " FALHA AO ENVIAR.\n");
-            send(c_newSocketFD, buffer, strlen(buffer), 0);
-            close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
 
@@ -345,11 +316,6 @@ void *connectionHandler(void *c_pNewSocketFD)
         if(aux = send(c_newSocketFD, buffer, strlen(buffer), 0) < 0) // write(c_newSocket, buffer, strlen(buffer)) == -1
         {
             printf("send failed 2 | %d\n",c_newSocketFD);
-            printf("send failed 1 | %d\n",c_newSocketFD);
-            memset(buffer,0,BUFFER);
-            sprintf(buffer, " FALHA AO ENVIAR.\n");
-            send(c_newSocketFD, buffer, strlen(buffer), 0);
-            close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("send succeded 2 | %d\n",c_newSocketFD);

@@ -334,7 +334,7 @@ void *connectionHandler(void *c_pNewSocketFD)
 
         
 
-        }while(num_bytes < 0);
+        }while(num_bytes > 0);
          
              s_response = getRequestORResponseFields(buffer);
              printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
