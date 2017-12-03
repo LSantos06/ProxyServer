@@ -38,7 +38,7 @@ void *connectionHandler(void *);
 RequestORResponse* getRequestORResponseFields(char*);
 char* getRequestORResponseMessage(RequestORResponse*);
 void freeRequestORResponseFiedls(RequestORResponse*);
-char * search_host(RequestORResponse * c_request);
+
 
 // HeaderList function headers
 HeaderList* createHeaderList();
@@ -177,29 +177,17 @@ void *connectionHandler(void *c_pNewSocketFD)
         printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
         printHeaderList(c_request->headers);
         printf("\nbody: %s\n\n",c_request->body);
-
-        char * aux_host = search_host(c_request);
-        printf("aux host -- %s\n",aux_host );
-        // filtragem_url --> 0 ta na black list ou tem deny terms
-        // se 1 -> esta white list    
-        printf("filtragem %d ",filtragem_url(aux_host));
-        printf("Fazendo a filtragem ......\n");
-        if(filtragem_url == 0){
-               // EM TESE EH PROIBIDO  
-               printf("Host esta na black list ou contem termos proibidos na URL\n"); 
-               printf("Fechando conexao\n"); 
-               memset(buffer,0,BUFFER);
-               sprintf(buffer, "403 Forbidden.\n");
-               send(c_newSocketFD, buffer, strlen(buffer), 0);
-               close(c_newSocketFD);  
-               exit(EXIT_FAILURE); 
-         }  
+ 
 
         // Creating proxy client socket file descriptor
         if ((s_clientFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1
         {
             printf("socket failed | %d\n",c_newSocketFD);
-            exit(EXIT_FAILURE);
+             memset(buffer,0,BUFFER);
+             sprintf(buffer, " FALHA NA SOCKET.\n");
+             send(c_newSocketFD, buffer, strlen(buffer), 0);
+             close(c_newSocketFD);  
+             exit(EXIT_FAILURE);
         }
         printf("socket succeded | %d\n",c_newSocketFD);
 
@@ -207,7 +195,10 @@ void *connectionHandler(void *c_pNewSocketFD)
         if(setsockopt(s_clientFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &s_opt, sizeof(s_opt)) < 0) // == -1
         {
             printf("setsockopt failed | %d\n",c_newSocketFD);
-            exit(EXIT_FAILURE);
+            memset(buffer,0,BUFFER);
+            sprintf(buffer, " FALHA NA SOCKET Opt.\n");
+            send(c_newSocketFD, buffer, strlen(buffer), 0);
+            close(c_newSocketFD);
         }
         printf("setsockport succeded | %d\n",c_newSocketFD);
 
@@ -218,10 +209,28 @@ void *connectionHandler(void *c_pNewSocketFD)
                 break;
         }
 
+
+        char * aux_host = strdup(auxHeaderList->value);
+        printf("Fazendo a filtragem ......\n");
+          if(filtragem_url(auxHeaderList->value) == 0){
+               // EM TESE EH PROIBIDO  
+               printf("Host esta na black list ou contem termos proibidos na URL\n"); 
+               printf("Fechando conexao\n"); 
+               memset(buffer,0,BUFFER);
+               sprintf(buffer, "403 [FILTRADO].\n");
+               send(c_newSocketFD, buffer, strlen(buffer), 0);
+               close(c_newSocketFD);  
+               exit(EXIT_FAILURE); 
+         }  
+         puts("Not filtered ...");
         // Requesting host name corresponding IP list
         if((he = gethostbyname(auxHeaderList->value)) == NULL)
         {
             printf("gethostbyname failed | %d\n",c_newSocketFD);
+            memset(buffer,0,BUFFER);
+            sprintf(buffer, "404 Not Found.\n");
+            send(c_newSocketFD, buffer, strlen(buffer), 0);
+            close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("gethostbyname succeded | %d\n",c_newSocketFD);
@@ -244,6 +253,10 @@ void *connectionHandler(void *c_pNewSocketFD)
         if(addr_list[aux] == NULL)
         {
             printf("connect failed | %d\n",c_newSocketFD);
+            memset(buffer,0,BUFFER);
+             sprintf(buffer, " FALHA NA CONEXAO.\n");
+             send(c_newSocketFD, buffer, strlen(buffer), 0);
+             close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
 
@@ -252,6 +265,10 @@ void *connectionHandler(void *c_pNewSocketFD)
         if((aux = send(s_clientFD, buffer, strlen(buffer), 0)) < 0) // write(s_clientFD, s_message, strlen(s_message)) == -1
         {
             printf("send failed 1 | %d\n",c_newSocketFD);
+            memset(buffer,0,BUFFER);
+             sprintf(buffer, " FALHA AO ENVIAR.\n");
+             send(c_newSocketFD, buffer, strlen(buffer), 0);
+             close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("send succeded 1 | %d\n",c_newSocketFD);
@@ -260,20 +277,56 @@ void *connectionHandler(void *c_pNewSocketFD)
         if((aux = recv(s_clientFD, buffer, sizeof(buffer), 0)) < 0) // read(s_clientFD, buffer, sizeof(s_buffer) == -1
         {
             printf("recv failed 2 | %d\n",c_newSocketFD);
+             printf("send failed 1 | %d\n",c_newSocketFD);
+            memset(buffer,0,BUFFER);
+             sprintf(buffer, " FALHA AO ENVIAR.\n");
+             send(c_newSocketFD, buffer, strlen(buffer), 0);
+             close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("recv succeded 2 | %d\n",c_newSocketFD);
-
+	// filtrando corpo da mensagem
+	if(s_response->body!=NULL){		 
+	  	if(denyterms_body(s_response->body,aux_host) == 1){
+               		// EM TESE EH PROIBIDO  
+              	    printf("Host esta na black list ou contem termos proibidos na URL\n"); 
+              	    printf("Fechando conexao\n"); 
+               	    memset(buffer,0,BUFFER);
+                    sprintf(buffer, "403 [FILTRADO].\n");
+                    send(c_newSocketFD, buffer, strlen(buffer), 0);
+                    close(c_newSocketFD);  
+                    exit(EXIT_FAILURE); 
+         }
+	}	
+	
         //
         while((aux = recv(s_clientFD, buffer, sizeof(buffer), 0)) > 0) // read(s_clientFD, buffer, sizeof(s_buffer)) != -1 && != 0
         {
             printf("recv succeded 3 | %d\n",c_newSocketFD);getchar();
             // PROBLEMA AQUI!
+	    if(s_response->body!=NULL){		 
+	       	if(denyterms_body(s_response->body,aux_host) == 1){
+               		// EM TESE EH PROIBIDO  
+              	    printf("Host esta na black list ou contem termos proibidos na URL\n"); 
+              	    printf("Fechando conexao\n"); 
+               	    memset(buffer,0,BUFFER);
+                    sprintf(buffer, "403 [FILTRADO].\n");
+                    send(c_newSocketFD, buffer, strlen(buffer), 0);
+                    close(c_newSocketFD);  
+                    exit(EXIT_FAILURE); 
+           }
+	}	
+	
             strcat(s_response->body,buffer);
         }
         if(aux < 0) // == -1
         {
             printf("recv failed 3 | %d\n",c_newSocketFD);
+            printf("send failed 1 | %d\n",c_newSocketFD);
+            memset(buffer,0,BUFFER);
+            sprintf(buffer, " FALHA AO ENVIAR.\n");
+            send(c_newSocketFD, buffer, strlen(buffer), 0);
+            close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
 
@@ -292,6 +345,11 @@ void *connectionHandler(void *c_pNewSocketFD)
         if(aux = send(c_newSocketFD, buffer, strlen(buffer), 0) < 0) // write(c_newSocket, buffer, strlen(buffer)) == -1
         {
             printf("send failed 2 | %d\n",c_newSocketFD);
+            printf("send failed 1 | %d\n",c_newSocketFD);
+            memset(buffer,0,BUFFER);
+            sprintf(buffer, " FALHA AO ENVIAR.\n");
+            send(c_newSocketFD, buffer, strlen(buffer), 0);
+            close(c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("send succeded 2 | %d\n",c_newSocketFD);
@@ -466,13 +524,3 @@ void printHeaderList(HeaderList *list)
         printHeaderList(list->next);
     }
 }
-char * search_host(RequestORResponse * c_request){
-    HeaderList *auxHeaderList = NULL;
-
-    for(auxHeaderList = c_request->headers;auxHeaderList != NULL;auxHeaderList = auxHeaderList->next)
-     {
-            if(!strcmp(auxHeaderList->headerFieldName,"Host"))
-               return auxHeaderList->value;
-     }
-     return NULL;
-} 

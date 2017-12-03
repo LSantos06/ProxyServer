@@ -2,52 +2,6 @@
 
 #define ERRO_LOG -1
 #define ACC_LOG 1
-/*
-int main()
-{
-	int i=0;
-	
-	
-	char v[100] = "www.youtube.com.br/watch?v=9EHeSjoDTU8";
-	printf("\n====-==== COMECANDO ");
-	char v2[] = "pt.org.br/tag/fora-temer";
-	i=filtragem_url(v2);
-	printf("\n saida = %d ",i);
-	mensagem_log(v2,1);
-	char v1[] = "google.com.br/search?ei=XCYKWvC0K4iHwgSs95jQAQ&q=fofInhos&oq=foFinhos&gs_";
-	i=filtragem_url(v1);
-	mensagem_log(v1,1);
-	printf("\n saida = %d ",i);
-	i=filtragem_url(v);
-	printf("\n saida = %d ",i);	
-	char w[]= "www.unb.br";
-	i=filtragem_url(w);
-	printf("\n saida = %d ",i);	
-	mensagem_log(w,1);
-	char g[] = "www.globo.br";
-	i=filtragem_url(g);
-	printf("\n saida = %d ",i);	
-	
-	char g22[] = "netflix.com.br";
-	i=filtragem_url(g22);
-	printf("\n %s saida = %d ",g22,i);	
-		char g26[] = "netflix.com.br";
-	i=filtragem_url(g26);
-	printf("\n %s saida = %d ",g26,i);	
-
-	char g23[] = "cic.unb.br";
-	i=filtragem_url(g23);
-	printf("\n %s saida = %d ",g23,i);	
-	char g24[] = "cic.unb.br";
-	i=filtragem_url(g24);
-	printf("\n %s saida = %d ",g24,i);	
-	
-	
-	
-	printf("\n FIM");
-	return i;
-}
-*/
 
 FILE* abrindo_arquivo(char* nome_arquivo){
   FILE *fp;
@@ -68,22 +22,28 @@ int checkLists(char* nome_arquivo,char * mensagem){
  	memset (procurado,'\0',strlen(mensagem));
 	strcpy (procurado,mensagem);
 	FILE * fp = abrindo_arquivo(nome_arquivo);
-	int aux;
+	int aux,cnt=0;
+
+
 	while (i<SIZE_LISTA && fgets(lista[i],MAX_STR,fp)!=NULL)
 	{
 		aux = strlen(lista[i])-2;
+		//printf(" %s - %d\n",lista[i],strlen(lista[i])-2);
 			
-		if(strcmp("denyterms.txt",nome_arquivo)==0)
-			aux = (strlen(procurado));
-
-		
-		if (strncmp(procurado,lista[i],aux)==0)
+		if (strncasecmp(procurado,lista[i],aux)==0)
 		{
 			saida = 1;
 			
 		}
 		i++;
 	} 
+	// para ultimo pegar
+	aux = strlen(lista[i-1]);
+	if (strncasecmp(procurado,lista[i-1	],aux)==0)
+		{
+			saida = 1;
+			
+		}
 	fclose(fp);
 	return saida;
 	}
@@ -108,13 +68,13 @@ int filtragem_url(char * url)
 	// verificando se esta na url os termos proibidos
 	aux_deny = denyterms_request(url);
 	if(aux_white){
-		printf("\n\tWHITE LIST OK --- ENCAMINHAR MENSAGEM %s \n",url);
+		//printf("\nWHITE LIST OK --- ENCAMINHAR MENSAGEM %s \n",url);
 		mensagem_log(url,ACC_LOG);
 		return 1;
 	} // verificando se esta na lista negra
 	else if(aux_black){
 	   
-		printf("\n\tESTA NA BLACK LIST  --- REJEITAR MENSAGEM %s \n",url);
+		printf("\nESTA NA BLACK LIST  --- REJEITAR MENSAGEM %s \n",url);
 		mensagem_log(url,ERRO_LOG);
 		return 0;
 	 }// se nao tiver em nenhuma da lista deve-se procurar por termos proibidos
@@ -124,7 +84,7 @@ int filtragem_url(char * url)
 		mensagem_log(url,ERRO_LOG);
 		return 0;	
 	}else{
-		printf("\n\tNao eh proibido nem esta na white, nem tem deny terms na url - ENCAMINHAR MENSAGEM %s \n",url);
+		//printf("\n\tNada %s \n",url);
 		mensagem_log(url,ACC_LOG);
 		return 1;
 	}
@@ -187,7 +147,7 @@ int * Length_denyterms(){
 	int j=1;
 	while (i<SIZE_LISTA && fgets(lista[i],MAX_STR,fp)!=NULL)
 	{
-		vetor[j] = strlen(lista[i])-1;
+		vetor[j] = strlen(lista[i])-2;
 		i++;j++;
 	} 
 	vetor[0] = i;  
@@ -204,7 +164,7 @@ int * Length_denyterms(){
 	
 }
 
-int denyterms_body(char * body){
+int denyterms_body(char * body,char *url){
 	char * aux_s = malloc(MAX_DADO*sizeof(char));
 	int * tamanho;
 	tamanho = Length_denyterms();
@@ -226,7 +186,8 @@ int denyterms_body(char * body){
 			
 	       if (checkLists("denyterms.txt",aux_s))
 		 	{
-		 	printf("\nDENTRO IF \t\t DEBUG == %s /// %d\n",aux_s,tamanho[j]);
+		 	//printf("\nDENTRO IF \t\t DEBUG == %s /// %d\n",aux_s,tamanho[j]);
+		 	mensagem_log_body(url,aux_s);
 		 	free(aux_s);
 		 	free(tamanho);
 			 return 1;
@@ -267,6 +228,27 @@ void mensagem_log(char * url, int opcao){
 	FILE *fp = abrindo_log(arquivo);
 	
 	fprintf(fp,"Data : %s [%s] :: Request foi %s: %s \n",__DATE__,__TIME__ ,mensagem,url);
+	
+	mensagem = NULL;
+	arquivo = NULL;
+	free(mensagem);
+	free(arquivo);
+	fclose(fp);
+}
+
+void mensagem_log_body(char * url, char * dado){
+	// op == ERRO_LOG -> rejeitado 
+	// op == ACEPT_LOG (!= 0) -> aceito
+	
+	char * mensagem =(char *) malloc(10*sizeof(char)); 
+	char * arquivo =(char *) malloc(16*sizeof(char));
+	
+	arquivo= "ErrorLog.txt";
+	mensagem = "rejeitado por palavra proibida";
+	
+	FILE *fp = abrindo_log(arquivo);
+	
+	fprintf(fp,"Data : %s [%s] :: Request foi %s: %s -> %s\n",__DATE__,__TIME__ ,mensagem,url,dado);
 	
 	mensagem = NULL;
 	arquivo = NULL;

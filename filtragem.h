@@ -17,9 +17,11 @@ int checkLists(char* nome_arquivo,char * mensagem);
 // talvez seja melhor receber a mensagem toda para que depois possa analizar o deny terms
 int  filtragem_url(char * url);
 int denyterms_request(char * request);
-int denyterms_body(char * request);
+int denyterms_body(char * body, char * url);
 FILE* abrindo_log(char* nome_arquivo);
 int * Length_denyterms(void);
 void mensagem_log(char * url, int opcao);
+void mensagem_log_body(char * url, char * dado);
+
 
 #endif
