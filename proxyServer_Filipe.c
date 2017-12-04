@@ -8,7 +8,6 @@
 #include<string.h>
 #include<unistd.h>
 #include<pthread.h>
-#include "filtragem.h"
 
 #define BACKLOG 20 // How many pending connections queue will hold
 #define BUFFER 32768 // Buffer size, máx message size
@@ -39,7 +38,6 @@ RequestORResponse* getRequestORResponseFields(char*);
 char* getRequestORResponseMessage(RequestORResponse*);
 void freeRequestORResponseFiedls(RequestORResponse*);
 
-    
 // HeaderList function headers
 HeaderList* createHeaderList();
 HeaderList* insertHeaderList(HeaderList*, char*, char*);
@@ -158,18 +156,18 @@ void *connectionHandler(void *c_pNewSocketFD)
     HeaderList *auxHeaderList = NULL;
     struct hostent *he;
     struct in_addr **addr_list;
-    int aux = 0, contentLength = 0;
+    int auxInt1 = 0, auxInt2 = 0, auxInt3 = 0;
     char buffer[BUFFER+1] = {0};
 
     // Receiving request message from browser client
-    if((aux = recv(c_newSocketFD, buffer, sizeof(buffer),0)) < 0) // read(c_newSocketFD, buffer, sizeof(buffer)) == -1
+    if((auxInt1 = recv(c_newSocketFD, buffer, sizeof(buffer),0)) < 0) // read(c_newSocketFD, buffer, sizeof(buffer)) == -1
     {
         printf("recv failed 1 | %d\n",c_newSocketFD);
         exit(EXIT_FAILURE);
     }
     printf("recv succeded 1 | %d\n",c_newSocketFD);
 
-    if(aux > 0) // != 0
+    if(auxInt1 > 0) // != 0
     {
         // Obtaining fields from request message
         //puts(buffer);
@@ -177,13 +175,12 @@ void *connectionHandler(void *c_pNewSocketFD)
         printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
         printHeaderList(c_request->headers);
         printf("\nbody: %s\n\n",c_request->body);
- 
 
         // Creating proxy client socket file descriptor
         if ((s_clientFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1
         {
             printf("socket failed | %d\n",c_newSocketFD);
-             exit(EXIT_FAILURE);
+            exit(EXIT_FAILURE);
         }
         printf("socket succeded | %d\n",c_newSocketFD);
 
@@ -202,20 +199,6 @@ void *connectionHandler(void *c_pNewSocketFD)
                 break;
         }
 
-
-        char * aux_host = strdup(auxHeaderList->value);
-        printf("Fazendo a filtragem ......\n");
-          if(filtragem_url(auxHeaderList->value) == 0){
-               // EM TESE EH PROIBIDO  
-               printf("Host esta na black list ou contem termos proibidos na URL\n"); 
-               printf("Fechando conexao\n"); 
-               memset(buffer,0,BUFFER);
-               sprintf(buffer, "403 [FILTRADO].\n");
-               send(c_newSocketFD, buffer, strlen(buffer), 0);
-               close(c_newSocketFD);  
-               exit(EXIT_FAILURE); 
-         }  
-         puts("Not filtered ...");
         // Requesting host name corresponding IP list
         if((he = gethostbyname(auxHeaderList->value)) == NULL)
         {
@@ -230,16 +213,16 @@ void *connectionHandler(void *c_pNewSocketFD)
 
         // Searching through IP list and requesting proxy-server connection
         addr_list = (struct in_addr **) he->h_addr_list;
-        for(aux = 0; addr_list[aux] != NULL; aux++) 
+        for(auxInt1 = 0; addr_list[auxInt1] != NULL; auxInt1++) 
         {
-            s_serverAddr.sin_addr.s_addr = inet_addr(inet_ntoa(*addr_list[aux]));
+            s_serverAddr.sin_addr.s_addr = inet_addr(inet_ntoa(*addr_list[auxInt1]));
             if(connect(s_clientFD, (struct sockaddr *)&s_serverAddr, sizeof(struct sockaddr_in)) >= 0) // != -1
             {
                 printf("connect succeded | %d\n",c_newSocketFD);
                 break;
             }
         }
-        if(addr_list[aux] == NULL)
+        if(addr_list[auxInt1] == NULL)
         {
             printf("connect failed | %d\n",c_newSocketFD);
             exit(EXIT_FAILURE);
@@ -247,7 +230,7 @@ void *connectionHandler(void *c_pNewSocketFD)
 
         // Sending request message from proxy to www
         strcpy(buffer,getRequestORResponseMessage(c_request));
-        if((aux = send(s_clientFD, buffer, strlen(buffer), 0)) < 0) // write(s_clientFD, s_message, strlen(s_message)) == -1
+        if((auxInt1 = send(s_clientFD, buffer, strlen(buffer), 0)) < 0) // write(s_clientFD, s_message, strlen(s_message)) == -1
         {
             printf("send failed 1 | %d\n",c_newSocketFD);
             exit(EXIT_FAILURE);
@@ -255,65 +238,53 @@ void *connectionHandler(void *c_pNewSocketFD)
         printf("send succeded 1 | %d\n",c_newSocketFD);
 
         // Receiving response message from www server
-        if((aux = recv(s_clientFD, buffer, sizeof(buffer), 0)) < 0) // read(s_clientFD, buffer, sizeof(s_buffer) == -1
+        if((auxInt1 = recv(s_clientFD, buffer, sizeof(buffer), 0)) < 0) // read(s_clientFD, buffer, sizeof(s_buffer) == -1
         {
             printf("recv failed 2 | %d\n",c_newSocketFD);
             exit(EXIT_FAILURE);
         }
         printf("recv succeded 2 | %d\n",c_newSocketFD);
-	// filtrando corpo da mensagem
-	if(s_response->body!=NULL){		 
-	  	if(denyterms_body(s_response->body,aux_host) == 1){
-               		// EM TESE EH PROIBIDO  
-              	    printf("Host esta na black list ou contem termos proibidos na URL\n"); 
-              	    printf("Fechando conexao\n"); 
-               	    memset(buffer,0,BUFFER);
-                    sprintf(buffer, "403 [FILTRADO].\n");
-                    send(c_newSocketFD, buffer, strlen(buffer), 0);
-                    close(c_newSocketFD);  
-                    exit(EXIT_FAILURE); 
-         }
-	}	
-	
-        //
-        while((aux = recv(s_clientFD, buffer, sizeof(buffer), 0)) > 0) // read(s_clientFD, buffer, sizeof(s_buffer)) != -1 && != 0
-        {
-            printf("recv succeded 3 | %d\n",c_newSocketFD);getchar();
-            // PROBLEMA AQUI!
-	    if(s_response->body!=NULL){		 
-	       	if(denyterms_body(s_response->body,aux_host) == 1){
-               		// EM TESE EH PROIBIDO  
-              	    printf("Host esta na black list ou contem termos proibidos na URL\n"); 
-              	    printf("Fechando conexao\n"); 
-               	    memset(buffer,0,BUFFER);
-                    sprintf(buffer, "403 [FILTRADO].\n");
-                    send(c_newSocketFD, buffer, strlen(buffer), 0);
-                    close(c_newSocketFD);  
-                    exit(EXIT_FAILURE); 
-           }
-	}	
-	
-            strcat(s_response->body,buffer);
-        }
-        if(aux < 0) // == -1
-        {
-            printf("recv failed 3 | %d\n",c_newSocketFD);
-            exit(EXIT_FAILURE);
-        }
 
         // Obtaining fields from response message
         //puts(buffer);
-        if(aux > 0) // != 0
+        if(auxInt1 > 0) // != 0
         {
+            for(auxInt2 = 1; auxInt2 <= auxInt1; auxInt2++)
+            {
+                if(buffer[auxInt2-1] == '\n' && buffer[auxInt2] == '\n')
+                    auxInt3 = auxInt1 - auxInt2;
+            }
             s_response = getRequestORResponseFields(buffer);
             printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
             printHeaderList(s_response->headers);     
             printf("\nbody: %s\n\n",s_response->body);
-            strcpy(buffer,getRequestORResponseMessage(s_response));
+            for(auxHeaderList = s_response->headers; auxHeaderList != NULL; auxHeaderList = auxHeaderList->next)
+            {
+                if(!strcmp(auxHeaderList->headerFieldName,"Content-Length"))
+                {
+                    //
+                    while((auxInt1 = recv(s_clientFD, buffer, sizeof(buffer), 0)) > 0) // read(s_clientFD, buffer, sizeof(s_buffer)) != -1 && != 0
+                    {
+                        printf("recv succeded 3 | %d\n",c_newSocketFD);
+                        for(auxInt2=0; auxInt2 < auxInt1; auxInt2++)
+                            s_response->body[auxInt3 + auxInt2] = buffer[auxInt2];
+                        auxInt3 += auxInt1;
+                    }
+                    if(auxInt1 < 0) // == -1
+                    {
+                        printf("recv failed 3 | %d\n",c_newSocketFD);
+                        exit(EXIT_FAILURE);
+                    }
+                    break;
+                }
+            }
         }
 
+        
+
         // Sending response mesage from proxy to browser client
-        if(aux = send(c_newSocketFD, buffer, strlen(buffer), 0) < 0) // write(c_newSocket, buffer, strlen(buffer)) == -1
+        strcpy(buffer,getRequestORResponseMessage(s_response));
+        if(auxInt1 = send(c_newSocketFD, buffer, strlen(buffer), 0) < 0) // write(c_newSocket, buffer, strlen(buffer)) == -1
         {
             printf("send failed 2 | %d\n",c_newSocketFD);
             exit(EXIT_FAILURE);
