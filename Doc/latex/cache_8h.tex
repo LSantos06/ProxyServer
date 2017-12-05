@@ -1,0 +1,153 @@
+\hypertarget{cache_8h}{}\section{C\+:/\+Users/\+User/\+Documents/\+Git\+Hub/\+Proxy\+Server/\+Proxy\+Fabre/include/cache.h File Reference}
+\label{cache_8h}\index{C\+:/\+Users/\+User/\+Documents/\+Git\+Hub/\+Proxy\+Server/\+Proxy\+Fabre/include/cache.\+h@{C\+:/\+Users/\+User/\+Documents/\+Git\+Hub/\+Proxy\+Server/\+Proxy\+Fabre/include/cache.\+h}}
+
+
+Arquivo com as instrucoes da cache.  
+
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structlist__cache}{list\+\_\+cache}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{cache_8h_a6c8469dfe973ac952cf40394bd2c160b}{M\+A\+X\+\_\+\+C\+A\+C\+H\+E\+\_\+\+S\+I\+ZE}~(10$<$$<$20) /$\ast$ 10\+M\+B $\ast$/
+\item 
+\#define \hyperlink{cache_8h_a36ae1b8888f32ba015cd34b6c8ceedbb}{M\+A\+X\+\_\+\+O\+B\+J\+E\+C\+T\+\_\+\+S\+I\+ZE}~(1$<$$<$20) /$\ast$ 1\+M\+B $\ast$/
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \hyperlink{structlist__cache}{list\+\_\+cache} \hyperlink{cache_8h_a4a6703077b946b1483339b1c1e28586d}{cache\+\_\+object}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{cache_8h_a69d8f9be530de147b0b48126389fc8bd}{add\+\_\+to\+\_\+cache} (char $\ast$data, int site\+\_\+size, char $\ast$url)
+\begin{DoxyCompactList}\small\item\em Funcao para adicionar um objeto cache da cache. \end{DoxyCompactList}\item 
+\hyperlink{cache_8h_a4a6703077b946b1483339b1c1e28586d}{cache\+\_\+object} $\ast$ \hyperlink{cache_8h_aff9cc6d3d6e5339b15e7830723f1163d}{cache\+\_\+find} (char $\ast$url)
+\begin{DoxyCompactList}\small\item\em Funcao para procurar um objeto cache de acordo com a url. \end{DoxyCompactList}\item 
+void \hyperlink{cache_8h_a4723a43de46ccdfdced4b3a584fcd0b6}{remove\+\_\+from\+\_\+cache} ()
+\begin{DoxyCompactList}\small\item\em Funcao para remover um objeto cache da cache. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{cache_8h_adc2cfac3a357c5424aafa9d351a2e6ea}{cache\+\_\+size}
+\item 
+long int \hyperlink{cache_8h_a38ab229ddc7bd24339c97ab2f3992313}{global\+\_\+time}
+\item 
+\hyperlink{cache_8h_a4a6703077b946b1483339b1c1e28586d}{cache\+\_\+object} $\ast$ \hyperlink{cache_8h_a7b6f802e75437c11a696967e44188279}{head}
+\item 
+pthread\+\_\+rwlock\+\_\+t \hyperlink{cache_8h_aa0246195b64447ad0ba3510f410604f4}{lock}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Arquivo com as instrucoes da cache. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{cache_8h_a6c8469dfe973ac952cf40394bd2c160b}\label{cache_8h_a6c8469dfe973ac952cf40394bd2c160b}} 
+\index{cache.\+h@{cache.\+h}!M\+A\+X\+\_\+\+C\+A\+C\+H\+E\+\_\+\+S\+I\+ZE@{M\+A\+X\+\_\+\+C\+A\+C\+H\+E\+\_\+\+S\+I\+ZE}}
+\index{M\+A\+X\+\_\+\+C\+A\+C\+H\+E\+\_\+\+S\+I\+ZE@{M\+A\+X\+\_\+\+C\+A\+C\+H\+E\+\_\+\+S\+I\+ZE}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+C\+A\+C\+H\+E\+\_\+\+S\+I\+ZE}{MAX\_CACHE\_SIZE}}
+{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+C\+A\+C\+H\+E\+\_\+\+S\+I\+ZE~(10$<$$<$20) /$\ast$ 10\+M\+B $\ast$/}
+
+\mbox{\Hypertarget{cache_8h_a36ae1b8888f32ba015cd34b6c8ceedbb}\label{cache_8h_a36ae1b8888f32ba015cd34b6c8ceedbb}} 
+\index{cache.\+h@{cache.\+h}!M\+A\+X\+\_\+\+O\+B\+J\+E\+C\+T\+\_\+\+S\+I\+ZE@{M\+A\+X\+\_\+\+O\+B\+J\+E\+C\+T\+\_\+\+S\+I\+ZE}}
+\index{M\+A\+X\+\_\+\+O\+B\+J\+E\+C\+T\+\_\+\+S\+I\+ZE@{M\+A\+X\+\_\+\+O\+B\+J\+E\+C\+T\+\_\+\+S\+I\+ZE}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{M\+A\+X\+\_\+\+O\+B\+J\+E\+C\+T\+\_\+\+S\+I\+ZE}{MAX\_OBJECT\_SIZE}}
+{\footnotesize\ttfamily \#define M\+A\+X\+\_\+\+O\+B\+J\+E\+C\+T\+\_\+\+S\+I\+ZE~(1$<$$<$20) /$\ast$ 1\+M\+B $\ast$/}
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{cache_8h_a4a6703077b946b1483339b1c1e28586d}\label{cache_8h_a4a6703077b946b1483339b1c1e28586d}} 
+\index{cache.\+h@{cache.\+h}!cache\+\_\+object@{cache\+\_\+object}}
+\index{cache\+\_\+object@{cache\+\_\+object}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{cache\+\_\+object}{cache\_object}}
+{\footnotesize\ttfamily typedef struct \hyperlink{structlist__cache}{list\+\_\+cache} \hyperlink{cache_8h_a4a6703077b946b1483339b1c1e28586d}{cache\+\_\+object}}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{cache_8h_a69d8f9be530de147b0b48126389fc8bd}\label{cache_8h_a69d8f9be530de147b0b48126389fc8bd}} 
+\index{cache.\+h@{cache.\+h}!add\+\_\+to\+\_\+cache@{add\+\_\+to\+\_\+cache}}
+\index{add\+\_\+to\+\_\+cache@{add\+\_\+to\+\_\+cache}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{add\+\_\+to\+\_\+cache()}{add\_to\_cache()}}
+{\footnotesize\ttfamily int add\+\_\+to\+\_\+cache (\begin{DoxyParamCaption}\item[{char $\ast$}]{data,  }\item[{int}]{site\+\_\+size,  }\item[{char $\ast$}]{url }\end{DoxyParamCaption})}
+
+
+
+Funcao para adicionar um objeto cache da cache. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & dado da pagina em si. \\
+\hline
+{\em site\+\_\+size,tamanho} & do site que sera armazenado. \\
+\hline
+{\em url} & string que corresponde a url que sera armazena na cache. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Retorna 1 se deu certo, zero se deu errado. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{cache_8h_aff9cc6d3d6e5339b15e7830723f1163d}\label{cache_8h_aff9cc6d3d6e5339b15e7830723f1163d}} 
+\index{cache.\+h@{cache.\+h}!cache\+\_\+find@{cache\+\_\+find}}
+\index{cache\+\_\+find@{cache\+\_\+find}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{cache\+\_\+find()}{cache\_find()}}
+{\footnotesize\ttfamily \hyperlink{cache_8h_a4a6703077b946b1483339b1c1e28586d}{cache\+\_\+object} $\ast$ cache\+\_\+find (\begin{DoxyParamCaption}\item[{char $\ast$}]{url }\end{DoxyParamCaption})}
+
+
+
+Funcao para procurar um objeto cache de acordo com a url. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em url} & string que corresponde a url que sera procurada na lista de objetos de cache. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Objeto cache referente a U\+RL ou N\+U\+LL se nao foi encontrado. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{cache_8h_a4723a43de46ccdfdced4b3a584fcd0b6}\label{cache_8h_a4723a43de46ccdfdced4b3a584fcd0b6}} 
+\index{cache.\+h@{cache.\+h}!remove\+\_\+from\+\_\+cache@{remove\+\_\+from\+\_\+cache}}
+\index{remove\+\_\+from\+\_\+cache@{remove\+\_\+from\+\_\+cache}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{remove\+\_\+from\+\_\+cache()}{remove\_from\_cache()}}
+{\footnotesize\ttfamily void remove\+\_\+from\+\_\+cache (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Funcao para remover um objeto cache da cache. 
+
+
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{cache_8h_adc2cfac3a357c5424aafa9d351a2e6ea}\label{cache_8h_adc2cfac3a357c5424aafa9d351a2e6ea}} 
+\index{cache.\+h@{cache.\+h}!cache\+\_\+size@{cache\+\_\+size}}
+\index{cache\+\_\+size@{cache\+\_\+size}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{cache\+\_\+size}{cache\_size}}
+{\footnotesize\ttfamily int cache\+\_\+size}
+
+Variavel global com o tamanho da cache \mbox{\Hypertarget{cache_8h_a38ab229ddc7bd24339c97ab2f3992313}\label{cache_8h_a38ab229ddc7bd24339c97ab2f3992313}} 
+\index{cache.\+h@{cache.\+h}!global\+\_\+time@{global\+\_\+time}}
+\index{global\+\_\+time@{global\+\_\+time}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{global\+\_\+time}{global\_time}}
+{\footnotesize\ttfamily long int global\+\_\+time}
+
+\mbox{\Hypertarget{cache_8h_a7b6f802e75437c11a696967e44188279}\label{cache_8h_a7b6f802e75437c11a696967e44188279}} 
+\index{cache.\+h@{cache.\+h}!head@{head}}
+\index{head@{head}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{head}{head}}
+{\footnotesize\ttfamily \hyperlink{cache_8h_a4a6703077b946b1483339b1c1e28586d}{cache\+\_\+object}$\ast$ head}
+
+Cabeca da lista de objetos cache \mbox{\Hypertarget{cache_8h_aa0246195b64447ad0ba3510f410604f4}\label{cache_8h_aa0246195b64447ad0ba3510f410604f4}} 
+\index{cache.\+h@{cache.\+h}!lock@{lock}}
+\index{lock@{lock}!cache.\+h@{cache.\+h}}
+\subsubsection{\texorpdfstring{lock}{lock}}
+{\footnotesize\ttfamily pthread\+\_\+rwlock\+\_\+t lock}
+
