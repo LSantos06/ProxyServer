@@ -12,6 +12,8 @@ int main(int argc, char *argv[]){
     int c_addrLen = sizeof(struct sockaddr_in);
     pthread_t v_thr[4];
     int aux_erro,i=0;
+    global_time =0;
+    cache_size = 0;
 
     // Argument check
     if(argc < 2)
