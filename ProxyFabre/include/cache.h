@@ -43,6 +43,6 @@ void remove_from_cache();
 cache_object* cache_find(char * url);
 
 /* Head of linked list cache_objects */
-cache_object * head  ;/**<	Cabeca da lista de objetos cache/
+cache_object * head  ;/**<	Cabeca da lista de objetos cache*/
 int cache_size; /**< Variavel global com o tamanho da cache*/
 long int global_time; 
