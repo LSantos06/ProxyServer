@@ -1,5 +1,5 @@
-#define MAX_CACHE_SIZE (1<<20) /* 10MB */
-#define MAX_OBJECT_SIZE (1<<10) /* 1MB */
+#define MAX_CACHE_SIZE (10<<20) /* 10MB */
+#define MAX_OBJECT_SIZE (1<<20) /* 1MB */
 
 struct list_cache {
     char * data; /* HTML code */

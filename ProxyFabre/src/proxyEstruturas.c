@@ -1,5 +1,6 @@
 #include "filtragem.h"
 #include "estruturas.h"
+#include "cache.h"
 
 // Handles each client connection
 void *connectionHandler(void *c_pNewSocketFD){
@@ -31,6 +32,7 @@ RequestORResponse* getRequestORResponseFields(char *buffer)
     RequestORResponse *requestORresponse = (RequestORResponse *)malloc(sizeof(RequestORResponse));
     int aux = 0, contentLength = 0;
     char auxBuffer[BUFFER], *pch = NULL, *pch2 = NULL;
+    cache_object * site = NULL;
 
     strcpy(auxBuffer,buffer);
     // Obtaining method
@@ -76,7 +78,14 @@ RequestORResponse* getRequestORResponseFields(char *buffer)
     }
     else
         requestORresponse->body = NULL;
-
+	
+	site = cache_find(requestORresponse->urlORstatusCode);
+	if(site == NULL){
+		
+		add_to_cache(requestORresponse->body, contentLength, requestORresponse->urlORstatusCode);
+		
+	}
+	
     return requestORresponse;
 }
 
