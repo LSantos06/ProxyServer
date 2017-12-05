@@ -104,3 +104,15 @@ Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br
 Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
 Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
 Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.flamengo.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.flamengo.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.flamengo.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.flamengo.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.flamengo.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.flamengo.com.br 

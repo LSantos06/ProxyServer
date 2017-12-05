@@ -428,7 +428,7 @@ void handle_client(int c_newSocketFD){
                    s_response = getRequestORResponseFields(buffer);
                     int dt_b=0;
                     if(s_response->body != NULL){
-                      dt_b = denyterms_body(s_response->body,s_response->versionORphrase){
+                      dt_b = denyterms_body(s_response->body,s_response->versionORphrase);
 
                         if(dt_b == 1){
                            printf("Termos proibidos nos dados\n"); 

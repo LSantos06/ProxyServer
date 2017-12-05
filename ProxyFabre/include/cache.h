@@ -1,3 +1,4 @@
+#include "estruturas.h"
 
 /**
 * @file cache.h

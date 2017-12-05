@@ -1,4 +1,4 @@
-#include "estruturas.h"
+
 /**
 * @file inspecao.h
 * @brief Arquivo com funcoes para o modulo de inspecao.

@@ -16,7 +16,7 @@ int main(int argc, char *argv[]){
     cache_size = 0;
 
     if(argc < 3){
-        perror("Para executar ./proxy <modo> <numero_da_porta> \n Lembrando que eh porta utilizada pelo IP do LoopBack");
+        perror("Para executar ./proxy <numero_da_porta> <modo> \n Lembrando que eh porta utilizada pelo IP do LoopBack");
         exit(EXIT_FAILURE);
     }
     if(argc > 3)
@@ -25,21 +25,21 @@ int main(int argc, char *argv[]){
         exit(EXIT_FAILURE);
     }
 
-    if(!strcmp(argv[1],"-i")){
+    if(!strcmp(argv[2],"-i")){
         printf("INSPECAO\n");
     }
-    else if(!strcmp(argv[1],"-f")){
+    else if(!strcmp(argv[2],"-f")){
         printf("FILTRAGEM\n");
     }
-    else if(!strcmp(argv[1],"-c")){
+    else if(!strcmp(argv[2],"-c")){
         printf("CACHE\n");
     }
     else{
-        printf("invalid argument %s\n", argv[1]);
+        printf("invalid argument %s\n", argv[2]);
         exit(EXIT_FAILURE);
     }
 
-    if(atoi(argv[2]) <= 1024 || atoi(argv[2]) >= 65535)
+    if(atoi(argv[1]) <= 1024 || atoi(argv[1]) >= 65535)
     {
         perror("invalid port argument\n");
         exit(EXIT_FAILURE);

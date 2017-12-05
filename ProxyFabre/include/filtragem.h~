@@ -1,4 +1,4 @@
-#include "estruturas.h"
+
 /**
 * @file filtragem.h
 * @brief Arquivo com as operacoes de filtragem.

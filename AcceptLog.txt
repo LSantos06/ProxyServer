@@ -611,3 +611,15 @@ Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.ocsp.pki.goog
 Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.ocsp.pki.goog 
 Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.pudim.com.br 
 Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.pudim.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.pudim.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.pudim.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.pudim.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.pudim.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.google-analytics.com 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.google-analytics.com 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.pudim.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.pudim.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.google-analytics.com 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.google-analytics.com 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.ocsp.sca1b.amazontrust.com 
+Data : Dec  5 2017 [06:24:21] :: Request foi aceito: www.ocsp.sca1b.amazontrust.com 
