@@ -20,18 +20,18 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define MAX_CACHE_SIZE (10<<20) /* 10MB */
-#define MAX_OBJECT_SIZE (1<<20) /* 1MB */
+#define MAX_CACHE_SIZE (1<<20) /* 10MB */
+#define MAX_OBJECT_SIZE (1<<10) /* 1MB */
 
-struct linkedlist_cache {
+struct list_cache {
     char * data; /* HTML code */
 	int size; /* size of the data */
 	long int lru_time_track; /* least recently used */
 	char * url;	/* identify cache objects by url */
-	struct linkedlist_cache * next; 
+	struct list_cache * next; 
 };
 
-typedef struct linkedlist_cache cache_object;
+typedef struct list_cache cache_object;
 
 pthread_rwlock_t lock;
 
