@@ -126,7 +126,7 @@ HeaderList* createHeaderList();
 * 	@param Value valor do campo.
 *	@return Ponteiro para HeaderList que contem o novo elemento inserido.
 */
-HeaderList* insertHeaderList(HeaderList *list, char *headerFieldName, char *value)
+HeaderList* insertHeaderList(HeaderList *list, char *headerFieldName, char *value);
 
 /**
 *   @fn int emptyHeaderList(HeaderList *list);
