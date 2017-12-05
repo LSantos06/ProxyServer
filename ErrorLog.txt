@@ -98,3 +98,9 @@ Data : Dec  3 2017 [14:42:41] :: Request foi rejeitado: www.netflix.com.br
 Data : Dec  3 2017 [14:42:41] :: Request foi rejeitado: www.netflix.com.br 
 Data : Dec  3 2017 [14:42:41] :: Request foi rejeitado: www.flamengo.br 
 Data : Dec  3 2017 [14:42:41] :: Request foi rejeitado: www.flafa.br/flamengo 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
+Data : Dec  5 2017 [06:24:21] :: Request foi rejeitado: www.netflix.com.br 
