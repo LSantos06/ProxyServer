@@ -1,6 +1,6 @@
-#include "filtragem.h"
-#include "estruturas.h"
-#include "cache.h"
+#include "../include/filtragem.h"
+#include "../include/estruturas.h"
+#include "../include/cache.h"
 
 
 int main(int argc, char *argv[]){
@@ -15,27 +15,13 @@ int main(int argc, char *argv[]){
     global_time =0;
     cache_size = 0;
 
-    if(argc < 3){
-        perror("Para executar ./proxy <numero_da_porta> <modo> \n Lembrando que eh porta utilizada pelo IP do LoopBack");
+    if(argc < 2){
+        perror("Para executar ./proxy <numero_da_porta> \n Lembrando que eh porta utilizada pelo IP do LoopBack");
         exit(EXIT_FAILURE);
     }
-    if(argc > 3)
+    if(argc > 2)
     {
         perror("too many arguments\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if(!strcmp(argv[2],"-i")){
-        printf("INSPECAO\n");
-    }
-    else if(!strcmp(argv[2],"-f")){
-        printf("FILTRAGEM\n");
-    }
-    else if(!strcmp(argv[2],"-c")){
-        printf("CACHE\n");
-    }
-    else{
-        printf("invalid argument %s\n", argv[2]);
         exit(EXIT_FAILURE);
     }
 

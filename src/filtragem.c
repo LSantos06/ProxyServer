@@ -1,4 +1,4 @@
-#include "filtragem.h"
+#include "../include/filtragem.h"
 
 FILE* abrindo_arquivo(char* nome_arquivo){
   FILE *fp;

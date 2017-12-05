@@ -1,144 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <netinet/tcp.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <string.h>
-#include <unistd.h>
-#include <pthread.h>
-#include "filtragem.h"
-
-
-#define BACKLOG 20 // How many pending connections queue will hold
-#define BUFFER 32768 // Buffer size, máx message size
-
-// Header line list structure
-typedef struct headerList
-{
-    char *headerFieldName;
-    char *value;
-    struct headerList *next;
-} HeaderList;
-
-// Request/Response message structure
-typedef struct requestORresponse
-{
-    char *methodORversion; // request:method,response:vesion
-    char *urlORstatusCode; // request:url,response:statusCode
-    char *versionORphrase; // request:version,response:phrase
-    HeaderList *headers;
-    char *body;
-} RequestORResponse;
-
-// Thread that handles pairs request/reponse
-void *connectionHandler(void *);
-
-// General functions headers
-RequestORResponse* getRequestORResponseFields(char*);
-char* getRequestORResponseMessage(RequestORResponse*);
-void freeRequestORResponseFiedls(RequestORResponse*);
-char * search_host(RequestORResponse * c_request);
-void handle_client(int c_newSocketFD);
-
-// HeaderList function headers
-HeaderList* createHeaderList();
-HeaderList* insertHeaderList(HeaderList*, char*, char*);
-int emptyHeaderList(HeaderList*);
-void freeHeaderList(HeaderList*);
-void printHeaderList(HeaderList*);  
-
-void get_1_line(char * first_l, char * buffer);
-void get_status(char * status, char * buffer);
-int verify_status(char * status);
-// Main
-int main(int argc, char *argv[])
-{
-    // c_: about client-proxy interface (proxy is server)
-    int c_serverFD = 0, c_opt = 1;
-    int c_newSocketFD = 0, *c_pNewSocketFD = NULL;
-    struct sockaddr_in c_serverAddr;
-    int c_addrLen = sizeof(struct sockaddr_in);
-    pthread_t v_thr[4];
-    int aux_erro,i=0;
-
-    // Argument check
-    if(argc < 2)
-    {
-        puts("how to execute: ./caching <port_number>");
-        return 0;
-    }
-    if(argc > 2)
-    {
-        perror("too many arguments\n");
-        exit(EXIT_FAILURE);
-    }
-    if(atoi(argv[1]) <= 1024 || atoi(argv[1]) >= 65535)
-    {
-        perror("invalid port argument\n");
-        exit(EXIT_FAILURE);
-    }
-
-    // Creating proxy server socket file descriptor
-    if((c_serverFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1
-    {
-        perror("socket failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("socket succeded");
-
-    // Optional: helps in reuse of address and port, prevents error such as “address already in use”
-    if(setsockopt(c_serverFD, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &c_opt, sizeof(c_opt)) < 0) // == -1
-    {
-        perror("setsockopt failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("setsockport succeded");
-
-    // Preparing proxy server sockaddr_in structure
-    c_serverAddr.sin_family = AF_INET;
-    c_serverAddr.sin_addr.s_addr = INADDR_ANY; // inet_addr("127.0.0.1");
-    c_serverAddr.sin_port = htons(atoi(argv[1]));
-    
-    // Biding c_serverFD to c_serverAddr
-    if(bind(c_serverFD, (struct sockaddr *)&c_serverAddr, c_addrLen) < 0) // == -1
-    {
-        perror("bind failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("bind succeded");
-
-    // Start listening for incoming conections requests
-    if(listen(c_serverFD, BACKLOG) < 0) // == -1
-    {
-        perror("listen failed");
-        exit(EXIT_FAILURE);
-    }
-    puts("listen succeded");
-
-    // Waiting or accepting incoming connections
-    puts("waiting for incoming connections...");
-    
-    while(i < 4){
-        aux_erro = pthread_create(&v_thr[i],NULL,&connectionHandler,(void *) &c_serverFD);
-        if(aux_erro < 0){
-            puts("Failed do create thread");
-        }    
-    i++;
-    }
-    for(i =0;i<4;i++){
-        pthread_join(v_thr[i],NULL);
-    }
-    puts("waiting for incoming connections...");
-
-
-    return 0;
-}
+#include "../include/filtragem.h"
+#include "../include/estruturas.h"
+#include "../include/cache.h"
 
 // Handles each client connection
-void *connectionHandler(void *c_pNewSocketFD)
-{
+void *connectionHandler(void *c_pNewSocketFD){
     // c_: about client-proxy interface (proxy is server)
     int c_newSocketFD = *(int*)c_pNewSocketFD;
  
@@ -167,6 +32,7 @@ RequestORResponse* getRequestORResponseFields(char *buffer)
     RequestORResponse *requestORresponse = (RequestORResponse *)malloc(sizeof(RequestORResponse));
     int aux = 0, contentLength = 0;
     char auxBuffer[BUFFER], *pch = NULL, *pch2 = NULL;
+    cache_object * site = NULL;
 
     strcpy(auxBuffer,buffer);
     // Obtaining method
@@ -212,7 +78,14 @@ RequestORResponse* getRequestORResponseFields(char *buffer)
     }
     else
         requestORresponse->body = NULL;
-
+	
+	site = cache_find(requestORresponse->urlORstatusCode);
+	if(site == NULL){
+		
+		add_to_cache(requestORresponse->body, contentLength, requestORresponse->urlORstatusCode);
+		
+	}
+	
     return requestORresponse;
 }
 
@@ -381,6 +254,8 @@ void handle_client(int c_newSocketFD){
                     printHeaderList(c_request->headers);
                     printf("\nbody: %s\n\n",c_request->body);
                     
+                    //intercepta_requisicao(c_request);
+
                     char * aux_host = search_host(c_request);
                     printf("aux host -- %s\n",aux_host );
                     // filtragem_url --> 0 ta na black list ou tem deny terms
@@ -392,11 +267,13 @@ void handle_client(int c_newSocketFD){
                            printf("Host esta na black list ou contem termos proibidos na URL\n"); 
                            printf("Fechando conexao\n"); 
                            memset(buffer,0,BUFFER);
-                           sprintf(buffer, "<html><body>Blocked website!<br><br></body></html>");
+                           sprintf(buffer, "Blocked website!");
                            send(c_newSocketFD, buffer, strlen(buffer), 0);
                            close(c_newSocketFD);  
                          return; 
                      }    
+
+
                     // Creating proxy client socket file descriptor
                     if((strncmp("GET",c_request->methodORversion,3)!=0)
                      ||(
@@ -410,6 +287,11 @@ void handle_client(int c_newSocketFD){
                            close(c_newSocketFD);     
                            return;
                     }
+                    /////////////////////////////////////////////////////////////////////
+                    ////            VERIFICAR SE O VALOR JA ESTA NA CACHE            ////
+                    ////                   SE TIVER CARREGA                          ////   
+                    /////////////////////////////////////////////////////////////////////
+
                     memset(buffer,0,BUFFER);
                     strcpy(buffer,getRequestORResponseMessage(c_request));
     
@@ -540,7 +422,36 @@ void handle_client(int c_newSocketFD){
                                     return;
                              }
                              printf("ENVIANDO DADOS \n");
-                             // agora ja recebeu os dados 
+                    // agora ja recebeu os dados 
+                              /////////////////////////////////////////////////////////////////////
+                    ////            verificar se tem deny terms no dado              ////
+                    ////                   ----------------                          ////   
+                    /////////////////////////////////////////////////////////////////////
+                   s_response = getRequestORResponseFields(buffer);
+                    int dt_b=0;
+                    if(s_response->body != NULL){
+                      dt_b = denyterms_body(s_response->body,s_response->versionORphrase);
+
+                        if(dt_b == 1){
+                           printf("Termos proibidos nos dados\n"); 
+                           printf("Fechando conexao\n"); 
+                           memset(buffer,0,BUFFER);
+                           sprintf(buffer, "Blocked website!");
+                           send(c_newSocketFD, buffer, strlen(buffer), 0);
+                           close(c_newSocketFD);  
+                           return; 
+                        }
+
+
+                     }
+                             
+                    /////////////////////////////////////////////////////////////////////
+                    ////            COLOCAR NA CACHE  OS VALORES CORRETOS            ////
+                    ////                   -------------------                       ////   
+                    /////////////////////////////////////////////////////////////////////
+
+     
+
                              if(num_bytes == 0){
                                 // cabou a conexao
                                 printf("Fim conexao, sem dados\n");

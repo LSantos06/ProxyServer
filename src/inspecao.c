@@ -1,4 +1,4 @@
-#include "inspecao.h"
+#include "../include/inspecao.h"
 
 /* Janela inpecao */
 // exibe a janela de inspecao
