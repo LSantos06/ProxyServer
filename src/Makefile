@@ -1,8 +1,8 @@
 default: compile
 
 compile:
-	gcc cache.c estruturas.c filtragem.c proxy_cache.c -o proxyServer_cache.out -lpthread
-	gcc filtragem.c proxy.c -o proxyServer.out -lpthread
+	gcc cache.c estruturas.c filtragem.c inspecao.c proxy_cache.c -o proxyServer_cache.out -lpthread
+	gcc filtragem.c inspecao.c proxy.c -o proxyServer.out -lpthread
 
 clean:
 	rm *.out
