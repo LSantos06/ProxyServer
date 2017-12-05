@@ -1,4 +1,4 @@
-#include "../include/inspecao.h"
+#include "../inspecao.h"
 
 int main(int argc, char *argv[]){
 
