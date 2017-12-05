@@ -1,0 +1,375 @@
+\hypertarget{estruturas_8h}{}\section{C\+:/\+Users/\+User/\+Documents/\+Git\+Hub/\+Proxy\+Server/\+Proxy\+Fabre/include/estruturas.h File Reference}
+\label{estruturas_8h}\index{C\+:/\+Users/\+User/\+Documents/\+Git\+Hub/\+Proxy\+Server/\+Proxy\+Fabre/include/estruturas.\+h@{C\+:/\+Users/\+User/\+Documents/\+Git\+Hub/\+Proxy\+Server/\+Proxy\+Fabre/include/estruturas.\+h}}
+
+
+Arquivo principal com a funcao main com servico de proxy.  
+
+
+{\ttfamily \#include $<$netinet/tcp.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$ctype.\+h$>$}\newline
+{\ttfamily \#include $<$setjmp.\+h$>$}\newline
+{\ttfamily \#include $<$signal.\+h$>$}\newline
+{\ttfamily \#include $<$sys/time.\+h$>$}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+{\ttfamily \#include $<$sys/wait.\+h$>$}\newline
+{\ttfamily \#include $<$sys/stat.\+h$>$}\newline
+{\ttfamily \#include $<$fcntl.\+h$>$}\newline
+{\ttfamily \#include $<$sys/mman.\+h$>$}\newline
+{\ttfamily \#include $<$errno.\+h$>$}\newline
+{\ttfamily \#include $<$math.\+h$>$}\newline
+{\ttfamily \#include $<$pthread.\+h$>$}\newline
+{\ttfamily \#include $<$semaphore.\+h$>$}\newline
+{\ttfamily \#include $<$sys/socket.\+h$>$}\newline
+{\ttfamily \#include $<$netdb.\+h$>$}\newline
+{\ttfamily \#include $<$netinet/in.\+h$>$}\newline
+{\ttfamily \#include $<$arpa/inet.\+h$>$}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{structheaderList}{header\+List}
+\item 
+struct \hyperlink{structrequestORresponse}{request\+O\+Rresponse}
+\end{DoxyCompactItemize}
+\subsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\#define \hyperlink{estruturas_8h_aeefbbafa97642defe3ee6c3080b7d66f}{B\+A\+C\+K\+L\+OG}~20
+\item 
+\#define \hyperlink{estruturas_8h_a05ec23ea9e68706e210bd8f965beee10}{B\+U\+F\+F\+ER}~32768
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+typedef struct \hyperlink{structheaderList}{header\+List} \hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List}
+\item 
+typedef struct \hyperlink{structrequestORresponse}{request\+O\+Rresponse} \hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void $\ast$ \hyperlink{estruturas_8h_a296be15ae56926046d9846892354ddc8}{connection\+Handler} (void $\ast$c\+\_\+p\+New\+Socket\+FD)
+\begin{DoxyCompactList}\small\item\em Atraves de thread maneja pares requesicoes e respostas. \end{DoxyCompactList}\item 
+\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$ \hyperlink{estruturas_8h_ab945ac2c363d7c3dbfccfd68252e6c8b}{create\+Header\+List} ()
+\begin{DoxyCompactList}\small\item\em Aloca um ponteiro de estutura Header\+List. \end{DoxyCompactList}\item 
+int \hyperlink{estruturas_8h_a80489cdd3f43db37258ae257c9a5b548}{empty\+Header\+List} (\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$list)
+\begin{DoxyCompactList}\small\item\em Verificia se a lista de cabecalho esta vazia. \end{DoxyCompactList}\item 
+void \hyperlink{estruturas_8h_ad37aff81985ee848106ee2288e8d1818}{free\+Header\+List} (\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$list)
+\begin{DoxyCompactList}\small\item\em Libera memoria da estrutura. \end{DoxyCompactList}\item 
+void \hyperlink{estruturas_8h_a4ebbe1ad14d271fd7625703aaa2ce362}{free\+Request\+O\+R\+Response\+Fiedls} (\hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response} $\ast$\hyperlink{structrequestORresponse}{request\+O\+Rresponse})
+\begin{DoxyCompactList}\small\item\em Libera a memoria da estrutura que foi passada com parametro. \end{DoxyCompactList}\item 
+void \hyperlink{estruturas_8h_a9a32f037f99ae6c7e060bd099cdbe8db}{get\+\_\+1\+\_\+line} (char $\ast$first\+\_\+l, char $\ast$buffer)
+\begin{DoxyCompactList}\small\item\em Pega a primeira linha de uma requisicao. \end{DoxyCompactList}\item 
+void \hyperlink{estruturas_8h_a838c1f9a539301c7ea5374c6196052e1}{get\+\_\+status} (char $\ast$status, char $\ast$buffer)
+\begin{DoxyCompactList}\small\item\em Pega o status da primeira linha de uma requisicao. \end{DoxyCompactList}\item 
+\hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response} $\ast$ \hyperlink{estruturas_8h_a1cb7d282b543642e4045895f9c984bac}{get\+Request\+O\+R\+Response\+Fields} (char $\ast$buffer)
+\begin{DoxyCompactList}\small\item\em Parse da string buffer guarda os campos de H\+T\+TP em uma struct. \end{DoxyCompactList}\item 
+char $\ast$ \hyperlink{estruturas_8h_a704f6b0b74b0224d559dd50bccc0cdc0}{get\+Request\+O\+R\+Response\+Message} (\hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response} $\ast$\hyperlink{structrequestORresponse}{request\+O\+Rresponse})
+\begin{DoxyCompactList}\small\item\em Pega estrutura que tem os campos separados e monta uma string de requisicao. \end{DoxyCompactList}\item 
+void \hyperlink{estruturas_8h_a4d6db1c1c1e4c83fde5f04659d1fe535}{handle\+\_\+client} (int c\+\_\+new\+Socket\+FD)
+\begin{DoxyCompactList}\small\item\em Maneja a conexao especifica de um cliente. \end{DoxyCompactList}\item 
+\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$ \hyperlink{estruturas_8h_a9ec3a0111c84fae63294210c69de28fc}{insert\+Header\+List} (\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$list, char $\ast$header\+Field\+Name, char $\ast$value)
+\begin{DoxyCompactList}\small\item\em Insere na lista de cabecalho de acordo com o header\+Field\+Name e a string value. \end{DoxyCompactList}\item 
+int \hyperlink{estruturas_8h_a0ddf1224851353fc92bfbff6f499fa97}{main} (int argc, char $\ast$argv\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Funcao principal do programa. \end{DoxyCompactList}\item 
+void \hyperlink{estruturas_8h_a6f3d39b51320a1b96e2c1f2095c8d51f}{print\+Header\+List} (\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$list)
+\begin{DoxyCompactList}\small\item\em Printa tudo que esta na lista de cabecalho. \end{DoxyCompactList}\item 
+char $\ast$ \hyperlink{estruturas_8h_a9e8dcb7cb38f4d1ad781d92cc32c6c81}{search\+\_\+host} (\hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response} $\ast$c\+\_\+request)
+\begin{DoxyCompactList}\small\item\em Ṕrocura o valor de host dado a estrutura. \end{DoxyCompactList}\item 
+int \hyperlink{estruturas_8h_a24f2d4ddc41020ff6797ee84e11495e9}{verify\+\_\+status} (char $\ast$status)
+\begin{DoxyCompactList}\small\item\em Verifica o status esta OK (2xx). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Arquivo principal com a funcao main com servico de proxy. 
+
+
+
+\subsection{Macro Definition Documentation}
+\mbox{\Hypertarget{estruturas_8h_aeefbbafa97642defe3ee6c3080b7d66f}\label{estruturas_8h_aeefbbafa97642defe3ee6c3080b7d66f}} 
+\index{estruturas.\+h@{estruturas.\+h}!B\+A\+C\+K\+L\+OG@{B\+A\+C\+K\+L\+OG}}
+\index{B\+A\+C\+K\+L\+OG@{B\+A\+C\+K\+L\+OG}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{B\+A\+C\+K\+L\+OG}{BACKLOG}}
+{\footnotesize\ttfamily \#define B\+A\+C\+K\+L\+OG~20}
+
+\mbox{\Hypertarget{estruturas_8h_a05ec23ea9e68706e210bd8f965beee10}\label{estruturas_8h_a05ec23ea9e68706e210bd8f965beee10}} 
+\index{estruturas.\+h@{estruturas.\+h}!B\+U\+F\+F\+ER@{B\+U\+F\+F\+ER}}
+\index{B\+U\+F\+F\+ER@{B\+U\+F\+F\+ER}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{B\+U\+F\+F\+ER}{BUFFER}}
+{\footnotesize\ttfamily \#define B\+U\+F\+F\+ER~32768}
+
+
+
+\subsection{Typedef Documentation}
+\mbox{\Hypertarget{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}\label{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}} 
+\index{estruturas.\+h@{estruturas.\+h}!Header\+List@{Header\+List}}
+\index{Header\+List@{Header\+List}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{Header\+List}{HeaderList}}
+{\footnotesize\ttfamily typedef struct \hyperlink{structheaderList}{header\+List}  \hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List}}
+
+\mbox{\Hypertarget{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}\label{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}} 
+\index{estruturas.\+h@{estruturas.\+h}!Request\+O\+R\+Response@{Request\+O\+R\+Response}}
+\index{Request\+O\+R\+Response@{Request\+O\+R\+Response}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{Request\+O\+R\+Response}{RequestORResponse}}
+{\footnotesize\ttfamily typedef struct \hyperlink{structrequestORresponse}{request\+O\+Rresponse}  \hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response}}
+
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{estruturas_8h_a296be15ae56926046d9846892354ddc8}\label{estruturas_8h_a296be15ae56926046d9846892354ddc8}} 
+\index{estruturas.\+h@{estruturas.\+h}!connection\+Handler@{connection\+Handler}}
+\index{connection\+Handler@{connection\+Handler}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{connection\+Handler()}{connectionHandler()}}
+{\footnotesize\ttfamily void $\ast$ connection\+Handler (\begin{DoxyParamCaption}\item[{void $\ast$}]{c\+\_\+p\+New\+Socket\+FD }\end{DoxyParamCaption})}
+
+
+
+Atraves de thread maneja pares requesicoes e respostas. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em c\+\_\+p\+New\+Socket\+FD} & descritor da socket do servidor. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{estruturas_8h_ab945ac2c363d7c3dbfccfd68252e6c8b}\label{estruturas_8h_ab945ac2c363d7c3dbfccfd68252e6c8b}} 
+\index{estruturas.\+h@{estruturas.\+h}!create\+Header\+List@{create\+Header\+List}}
+\index{create\+Header\+List@{create\+Header\+List}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{create\+Header\+List()}{createHeaderList()}}
+{\footnotesize\ttfamily \hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$ create\+Header\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+Aloca um ponteiro de estutura Header\+List. 
+
+\begin{DoxyReturn}{Returns}
+Ponteiro para Header\+List ja inicializada. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{estruturas_8h_a80489cdd3f43db37258ae257c9a5b548}\label{estruturas_8h_a80489cdd3f43db37258ae257c9a5b548}} 
+\index{estruturas.\+h@{estruturas.\+h}!empty\+Header\+List@{empty\+Header\+List}}
+\index{empty\+Header\+List@{empty\+Header\+List}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{empty\+Header\+List()}{emptyHeaderList()}}
+{\footnotesize\ttfamily int empty\+Header\+List (\begin{DoxyParamCaption}\item[{\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$}]{list }\end{DoxyParamCaption})}
+
+
+
+Verificia se a lista de cabecalho esta vazia. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & ponteiro para estrutura que contem os cabecalhos e seus valores. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 se estiver vazio, 0 se estiver com elementos. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{estruturas_8h_ad37aff81985ee848106ee2288e8d1818}\label{estruturas_8h_ad37aff81985ee848106ee2288e8d1818}} 
+\index{estruturas.\+h@{estruturas.\+h}!free\+Header\+List@{free\+Header\+List}}
+\index{free\+Header\+List@{free\+Header\+List}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{free\+Header\+List()}{freeHeaderList()}}
+{\footnotesize\ttfamily void free\+Header\+List (\begin{DoxyParamCaption}\item[{\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$}]{list }\end{DoxyParamCaption})}
+
+
+
+Libera memoria da estrutura. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & ponteiro para estrutura que contem os cabecalhos e seus valores. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{estruturas_8h_a4ebbe1ad14d271fd7625703aaa2ce362}\label{estruturas_8h_a4ebbe1ad14d271fd7625703aaa2ce362}} 
+\index{estruturas.\+h@{estruturas.\+h}!free\+Request\+O\+R\+Response\+Fiedls@{free\+Request\+O\+R\+Response\+Fiedls}}
+\index{free\+Request\+O\+R\+Response\+Fiedls@{free\+Request\+O\+R\+Response\+Fiedls}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{free\+Request\+O\+R\+Response\+Fiedls()}{freeRequestORResponseFiedls()}}
+{\footnotesize\ttfamily void free\+Request\+O\+R\+Response\+Fiedls (\begin{DoxyParamCaption}\item[{\hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response} $\ast$}]{request\+O\+Rresponse }\end{DoxyParamCaption})}
+
+
+
+Libera a memoria da estrutura que foi passada com parametro. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \hyperlink{structrequestORresponse}{request\+O\+Rresponse}} & estrutura que sera liberada. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{estruturas_8h_a9a32f037f99ae6c7e060bd099cdbe8db}\label{estruturas_8h_a9a32f037f99ae6c7e060bd099cdbe8db}} 
+\index{estruturas.\+h@{estruturas.\+h}!get\+\_\+1\+\_\+line@{get\+\_\+1\+\_\+line}}
+\index{get\+\_\+1\+\_\+line@{get\+\_\+1\+\_\+line}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+1\+\_\+line()}{get\_1\_line()}}
+{\footnotesize\ttfamily void get\+\_\+1\+\_\+line (\begin{DoxyParamCaption}\item[{char $\ast$}]{first\+\_\+l,  }\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Pega a primeira linha de uma requisicao. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em first\+\_\+l} & String que ter apenas o valor da primeira linha. \\
+\hline
+{\em buffer} & String que tem todo conteudo do buffer. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{estruturas_8h_a838c1f9a539301c7ea5374c6196052e1}\label{estruturas_8h_a838c1f9a539301c7ea5374c6196052e1}} 
+\index{estruturas.\+h@{estruturas.\+h}!get\+\_\+status@{get\+\_\+status}}
+\index{get\+\_\+status@{get\+\_\+status}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+status()}{get\_status()}}
+{\footnotesize\ttfamily void get\+\_\+status (\begin{DoxyParamCaption}\item[{char $\ast$}]{status,  }\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Pega o status da primeira linha de uma requisicao. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em status} & String que ter apenas o valor do codigo de status. \\
+\hline
+{\em buffer} & String que tem todo conteudo do buffer. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{estruturas_8h_a1cb7d282b543642e4045895f9c984bac}\label{estruturas_8h_a1cb7d282b543642e4045895f9c984bac}} 
+\index{estruturas.\+h@{estruturas.\+h}!get\+Request\+O\+R\+Response\+Fields@{get\+Request\+O\+R\+Response\+Fields}}
+\index{get\+Request\+O\+R\+Response\+Fields@{get\+Request\+O\+R\+Response\+Fields}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{get\+Request\+O\+R\+Response\+Fields()}{getRequestORResponseFields()}}
+{\footnotesize\ttfamily \hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response} $\ast$ get\+Request\+O\+R\+Response\+Fields (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer }\end{DoxyParamCaption})}
+
+
+
+Parse da string buffer guarda os campos de H\+T\+TP em uma struct. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & -\/$>$ string que tem os dados enviados pelo browser. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Request\+O\+R\+Response estrutura que armazena as strings do cabecalho e formato H\+T\+TP. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{estruturas_8h_a704f6b0b74b0224d559dd50bccc0cdc0}\label{estruturas_8h_a704f6b0b74b0224d559dd50bccc0cdc0}} 
+\index{estruturas.\+h@{estruturas.\+h}!get\+Request\+O\+R\+Response\+Message@{get\+Request\+O\+R\+Response\+Message}}
+\index{get\+Request\+O\+R\+Response\+Message@{get\+Request\+O\+R\+Response\+Message}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{get\+Request\+O\+R\+Response\+Message()}{getRequestORResponseMessage()}}
+{\footnotesize\ttfamily char $\ast$ get\+Request\+O\+R\+Response\+Message (\begin{DoxyParamCaption}\item[{\hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response} $\ast$}]{request\+O\+Rresponse }\end{DoxyParamCaption})}
+
+
+
+Pega estrutura que tem os campos separados e monta uma string de requisicao. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \hyperlink{structrequestORresponse}{request\+O\+Rresponse}} & estrutura que sera usada para montar a requisicao ou mensagem de resposta. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+String no formato correto para envio de requisicao. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{estruturas_8h_a4d6db1c1c1e4c83fde5f04659d1fe535}\label{estruturas_8h_a4d6db1c1c1e4c83fde5f04659d1fe535}} 
+\index{estruturas.\+h@{estruturas.\+h}!handle\+\_\+client@{handle\+\_\+client}}
+\index{handle\+\_\+client@{handle\+\_\+client}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{handle\+\_\+client()}{handle\_client()}}
+{\footnotesize\ttfamily void handle\+\_\+client (\begin{DoxyParamCaption}\item[{int}]{c\+\_\+new\+Socket\+FD }\end{DoxyParamCaption})}
+
+
+
+Maneja a conexao especifica de um cliente. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em c\+\_\+new\+Socket\+FD} & descritor da socket do cliente. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{estruturas_8h_a9ec3a0111c84fae63294210c69de28fc}\label{estruturas_8h_a9ec3a0111c84fae63294210c69de28fc}} 
+\index{estruturas.\+h@{estruturas.\+h}!insert\+Header\+List@{insert\+Header\+List}}
+\index{insert\+Header\+List@{insert\+Header\+List}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{insert\+Header\+List()}{insertHeaderList()}}
+{\footnotesize\ttfamily \hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$ insert\+Header\+List (\begin{DoxyParamCaption}\item[{\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$}]{list,  }\item[{char $\ast$}]{header\+Field\+Name,  }\item[{char $\ast$}]{value }\end{DoxyParamCaption})}
+
+
+
+Insere na lista de cabecalho de acordo com o header\+Field\+Name e a string value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & ponteiro para estrutura que contem os cabecalhos e seus valores. \\
+\hline
+{\em header\+Field\+Name} & String com o nome do campo do cabecalho. \\
+\hline
+{\em value} & valor do campo. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Ponteiro para Header\+List que contem o novo elemento inserido. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{estruturas_8h_a0ddf1224851353fc92bfbff6f499fa97}\label{estruturas_8h_a0ddf1224851353fc92bfbff6f499fa97}} 
+\index{estruturas.\+h@{estruturas.\+h}!main@{main}}
+\index{main@{main}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{main()}{main()}}
+{\footnotesize\ttfamily int main (\begin{DoxyParamCaption}\item[{int}]{argc,  }\item[{char $\ast$}]{argv\mbox{[}$\,$\mbox{]} }\end{DoxyParamCaption})}
+
+
+
+Funcao principal do programa. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em argc} & Quantidade de argumentos passados pela linha de comando. \\
+\hline
+{\em argv\mbox{[}$\,$\mbox{]}} & Argumentos passados pela linha de comando. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Status de execucao. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{estruturas_8h_a6f3d39b51320a1b96e2c1f2095c8d51f}\label{estruturas_8h_a6f3d39b51320a1b96e2c1f2095c8d51f}} 
+\index{estruturas.\+h@{estruturas.\+h}!print\+Header\+List@{print\+Header\+List}}
+\index{print\+Header\+List@{print\+Header\+List}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{print\+Header\+List()}{printHeaderList()}}
+{\footnotesize\ttfamily void print\+Header\+List (\begin{DoxyParamCaption}\item[{\hyperlink{estruturas_8h_a8a8b4f2337bacf921c5b455f8be7b6e4}{Header\+List} $\ast$}]{list }\end{DoxyParamCaption})}
+
+
+
+Printa tudo que esta na lista de cabecalho. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em list} & ponteiro para estrutura que contem os cabecalhos e seus valores. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{estruturas_8h_a9e8dcb7cb38f4d1ad781d92cc32c6c81}\label{estruturas_8h_a9e8dcb7cb38f4d1ad781d92cc32c6c81}} 
+\index{estruturas.\+h@{estruturas.\+h}!search\+\_\+host@{search\+\_\+host}}
+\index{search\+\_\+host@{search\+\_\+host}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{search\+\_\+host()}{search\_host()}}
+{\footnotesize\ttfamily char $\ast$ search\+\_\+host (\begin{DoxyParamCaption}\item[{\hyperlink{estruturas_8h_a203a92581d452fc116c9fcc7eb87db90}{Request\+O\+R\+Response} $\ast$}]{c\+\_\+request }\end{DoxyParamCaption})}
+
+
+
+Ṕrocura o valor de host dado a estrutura. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em c\+\_\+request} & estrutura que sera usada para procurar o valor do host. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+String com o valor do host ou N\+U\+LL. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{estruturas_8h_a24f2d4ddc41020ff6797ee84e11495e9}\label{estruturas_8h_a24f2d4ddc41020ff6797ee84e11495e9}} 
+\index{estruturas.\+h@{estruturas.\+h}!verify\+\_\+status@{verify\+\_\+status}}
+\index{verify\+\_\+status@{verify\+\_\+status}!estruturas.\+h@{estruturas.\+h}}
+\subsubsection{\texorpdfstring{verify\+\_\+status()}{verify\_status()}}
+{\footnotesize\ttfamily int verify\+\_\+status (\begin{DoxyParamCaption}\item[{char $\ast$}]{status }\end{DoxyParamCaption})}
+
+
+
+Verifica o status esta OK (2xx). 
+
+
+\begin{DoxyParams}{Parameters}
+{\em status} & String que tem o codigo de status. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 se comeca com 2 e 0 caso contrario. 
+\end{DoxyReturn}
