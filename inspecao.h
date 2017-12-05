@@ -3,6 +3,36 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <unistd.h>
+#include <pthread.h>
+#include "filtragem.h"
+
+#define BACKLOG 20 // How many pending connections queue will hold
+#define BUFFER 32768 // Buffer size, máx message size
+
+// Header line list structure
+typedef struct headerList
+{
+    char *headerFieldName;
+    char *value;
+    struct headerList *next;
+} HeaderList;
+
+// Request/Response message structure
+typedef struct requestORresponse
+{
+    char *methodORversion; // request:method,response:vesion
+    char *urlORstatusCode; // request:url,response:statusCode
+    char *versionORphrase; // request:version,response:phrase
+    HeaderList *headers;
+    char *body;
+} RequestORResponse;
 
 /* Janela inpecao */
 // exibe a janela de inspecao
@@ -27,5 +57,14 @@ void edita_campo_resposta();
 void janela_resposta();
 // manda a reposta para o browser
 void entrega_browser();
+
+RequestORResponse* getRequestORResponseFields(char *buffer);
+char* getRequestORResponseMessage(RequestORResponse *requestORresponse);
+void freeRequestORResponseFiedls(RequestORResponse *requestORresponse);
+HeaderList* createHeaderList();
+HeaderList* insertHeaderList(HeaderList *list, char *headerFieldName, char *value);
+int emptyHeaderList(HeaderList *list);
+void freeHeaderList(HeaderList *list);
+void printHeaderList(HeaderList *list);
 
 #endif
