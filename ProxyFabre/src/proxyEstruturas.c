@@ -257,11 +257,13 @@ void handle_client(int c_newSocketFD){
                            printf("Host esta na black list ou contem termos proibidos na URL\n"); 
                            printf("Fechando conexao\n"); 
                            memset(buffer,0,BUFFER);
-                           sprintf(buffer, "<html><body>Blocked website!<br><br></body></html>");
+                           sprintf(buffer, "Blocked website!");
                            send(c_newSocketFD, buffer, strlen(buffer), 0);
                            close(c_newSocketFD);  
                          return; 
                      }    
+
+
                     // Creating proxy client socket file descriptor
                     if((strncmp("GET",c_request->methodORversion,3)!=0)
                      ||(
@@ -275,6 +277,11 @@ void handle_client(int c_newSocketFD){
                            close(c_newSocketFD);     
                            return;
                     }
+                    /////////////////////////////////////////////////////////////////////
+                    ////            VERIFICAR SE O VALOR JA ESTA NA CACHE            ////
+                    ////                   SE TIVER CARREGA                          ////   
+                    /////////////////////////////////////////////////////////////////////
+
                     memset(buffer,0,BUFFER);
                     strcpy(buffer,getRequestORResponseMessage(c_request));
     
@@ -405,7 +412,18 @@ void handle_client(int c_newSocketFD){
                                     return;
                              }
                              printf("ENVIANDO DADOS \n");
-                             // agora ja recebeu os dados 
+                    // agora ja recebeu os dados 
+                    /////////////////////////////////////////////////////////////////////
+                    ////            verificar se tem deny terms no dado              ////
+                    ////                   ----------------                          ////   
+                    /////////////////////////////////////////////////////////////////////
+        
+                             
+                    /////////////////////////////////////////////////////////////////////
+                    ////            COLOCAR NA CACHE  OS VALORES CORRETOS            ////
+                    ////                   -------------------                       ////   
+                    /////////////////////////////////////////////////////////////////////
+
                              if(num_bytes == 0){
                                 // cabou a conexao
                                 printf("Fim conexao, sem dados\n");
