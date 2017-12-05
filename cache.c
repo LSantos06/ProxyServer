@@ -14,7 +14,7 @@ int add_to_cache(char * data, int site_size, char* url) {
 	{
 		return 0;
 	} else {
-		dbg_printf("add_to_cache");
+		printf("add_to_cache");
 		/* Writing to the cache - only one thread should be able to write to it */
 		pthread_rwlock_wrlock(&lock); /* lock on the resource*/
 		/* Free enough space for the new site in cache*/
@@ -44,7 +44,7 @@ int add_to_cache(char * data, int site_size, char* url) {
 */
 
 cache_object* cache_find( char * url ){
-	dbg_printf( "cache_find" );
+	printf( "cache_find" );
 	cache_object * site = NULL;
     printf("INSIDE Cache_find %s\n",url);
 	if( head != NULL ){
