@@ -3,7 +3,7 @@
 * @file estruturas.h
 * @brief Arquivo principal com a funcao main com servico de proxy.
 */
-#ifndef estruturas_h 
+#ifndef estruturas_h
 #define estruturas_h
 
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]);
 /**
 *   @fn void *connectionHandler(void *);
 *   @brief Atraves de thread maneja pares requesicoes e respostas.
-* 	@param c_pNewSocketFD descritor da socket do servidor. 
+* 	@param c_pNewSocketFD descritor da socket do servidor.
 */
 void *connectionHandler(void * c_pNewSocketFD);
 
@@ -74,30 +74,30 @@ void *connectionHandler(void * c_pNewSocketFD);
 /**
 *   @fn RequestORResponse* getRequestORResponseFields(char *buffer)
 *   @brief Parse da string buffer guarda os campos de HTTP em uma struct.
-* 	@param buffer -> string que tem os dados enviados pelo browser. 
+* 	@param buffer -> string que tem os dados enviados pelo browser.
 *	@return RequestORResponse estrutura que armazena as strings do cabecalho e formato HTTP.
 */
 RequestORResponse* getRequestORResponseFields(char *buffer);
 
 /**
 *   @fn char* getRequestORResponseMessage(RequestORResponse *requestORresponse)
-*   @brief Pega estrutura que tem os campos separados e monta uma string de requisicao.  
-* 	@param requestORresponse estrutura que sera usada para montar a requisicao ou mensagem de resposta. 
+*   @brief Pega estrutura que tem os campos separados e monta uma string de requisicao.
+* 	@param requestORresponse estrutura que sera usada para montar a requisicao ou mensagem de resposta.
 *	@return String no formato correto para envio de requisicao.
 */
 char* getRequestORResponseMessage(RequestORResponse *requestORresponse);
 
 /**
 *   @fn void freeRequestORResponseFiedls(RequestORResponse *requestORresponse);
-*   @brief Libera a memoria da estrutura que foi passada com parametro.  
+*   @brief Libera a memoria da estrutura que foi passada com parametro.
 * 	@param requestORresponse estrutura que sera liberada.
 */
 void freeRequestORResponseFiedls(RequestORResponse *requestORresponse);
 
 /**
 *   @fn char * search_host(RequestORResponse * c_request);
-*   @brief Ṕrocura o valor de host dado a estrutura.  
-* 	@param c_request estrutura que sera usada para procurar o valor do host. 
+*   @brief Ṕrocura o valor de host dado a estrutura.
+* 	@param c_request estrutura que sera usada para procurar o valor do host.
 *	@return String com o valor do host ou NULL.
 */
 char * search_host(RequestORResponse * c_request);
@@ -105,7 +105,7 @@ char * search_host(RequestORResponse * c_request);
 /**
 *   @fn void handle_client(int c_newSocketFD);
 *   @brief Maneja a conexao especifica de um cliente.
-* 	@param c_newSocketFD descritor da socket do cliente. 
+* 	@param c_newSocketFD descritor da socket do cliente.
 */
 void handle_client(int c_newSocketFD);
 
@@ -123,7 +123,7 @@ HeaderList* createHeaderList();
 *   @brief Insere na lista de cabecalho de acordo com o headerFieldName e a string value.
 * 	@param list ponteiro para estrutura que contem os cabecalhos e seus valores.
 * 	@param headerFieldName String com o nome do campo do cabecalho.
-* 	@param Value valor do campo.
+* 	@param value valor do campo.
 *	@return Ponteiro para HeaderList que contem o novo elemento inserido.
 */
 HeaderList* insertHeaderList(HeaderList *list, char *headerFieldName, char *value);
@@ -144,11 +144,11 @@ int emptyHeaderList(HeaderList *list);
 void freeHeaderList(HeaderList *list);
 
 /**
-*   @fn void printHeaderList(HeaderList *list);  
+*   @fn void printHeaderList(HeaderList *list);
 *   @brief Printa tudo que esta na lista de cabecalho.
 * 	@param list ponteiro para estrutura que contem os cabecalhos e seus valores.
 */
-void printHeaderList(HeaderList *list);  
+void printHeaderList(HeaderList *list);
 
 /**
 *   @fn void get_1_line(char * first_l, char * buffer);
@@ -161,7 +161,7 @@ void get_1_line(char * first_l, char * buffer);
 /**
 *   @fn void get_status(char * status, char * buffer);
 *   @brief Pega o status da primeira linha de uma requisicao.
-* 	@param first_l String que ter apenas o valor do codigo de status.
+* 	@param status String que ter apenas o valor do codigo de status.
 * 	@param buffer String que tem todo conteudo do buffer.
 */
 void get_status(char * status, char * buffer);

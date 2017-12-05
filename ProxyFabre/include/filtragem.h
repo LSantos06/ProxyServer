@@ -3,7 +3,7 @@
 * @file filtragem.h
 * @brief Arquivo com as operacoes de filtragem.
 */
-#ifndef filtragem_h 
+#ifndef filtragem_h
 #define filtragem_h
 
 #include <stdlib.h>
@@ -36,28 +36,28 @@ int checkLists(char* nome_arquivo,char * mensagem);
 // talvez seja melhor receber a mensagem toda para que depois possa analizar o deny terms
 /**
 *   @fn int  filtragem_url(char * url);
-*   @brief Funcao que checa se uma  url se encontra na whitelist, na blacklist, denyterms ou se nao esta nem um destes arquivos. 
+*   @brief Funcao que checa se uma  url se encontra na whitelist, na blacklist, denyterms ou se nao esta nem um destes arquivos.
 *   @param url eh a url que sera filtrada.
 *   @return 1 se for encontrado no denyterms.txt ou blacklist.txt, caso contrario 0.
 */
 int  filtragem_url(char * url);
 /**
 *   @fn int denyterms_request(char * request);
-*   @brief Funcao que checa se em uma url tem algum termo proibido. 
-*   @param url eh a url que sera verificada.
+*   @brief Funcao que checa se em uma url tem algum termo proibido.
+*   @param request eh a url que sera verificada.
 *   @return 1 se for encontrado no denyterms.txt, caso contrario 0.
 */
 int denyterms_request(char * request);
 /**
 *   @fn int denyterms_body(char * body, char * url);
-*   @brief Funcao que checa se em um corpo tem algum termo proibido. 
-*   @param body, corpo que sera verificado.
+*   @brief Funcao que checa se em um corpo tem algum termo proibido.
+*   @param body corpo que sera verificado.
 *   @param url que eh passada para funcao de LOG caso tenha termos proibidos.
 *   @return 1 se for encontrado no denyterms.txt, caso contrario 0.
 */
 int denyterms_body(char * body, char * url);
 /**
-*   @fn FILE* abrindo_logchar* nome_arquivo);
+*   @fn FILE* abrindo_log(char* nome_arquivo);
 *   @brief Funcao para abrir um arquivo<log>.txt .
 *   @param nome_arquivo corresponde ao nome do arquivo que tera que ser lido.
 *   @return Ponteiro para FILE* ja aberto.
@@ -78,10 +78,10 @@ int * Length_denyterms(void);
 void mensagem_log(char * url, int opcao);
 
 /**
-*   @fn void mensagem_log_body(char * url, int opcao);
+*   @fn void mensagem_log_body(char * url, char * dado);
 *   @brief Funcao para escrever um log - com data, url e se foi rejeitada no corpo.
 *   @param url que sera colocada no log.
-*   @param dado, string que foi responsavel por ser rejeitada.
+*   @param dado string que foi responsavel por ser rejeitada.
 */
 void mensagem_log_body(char * url, char * dado);
 
