@@ -1,3 +1,8 @@
+
+/**
+* @file filtragem.h
+* @brief Arquivo com as operacoes de filtragem.
+*/
 #ifndef filtragem_h 
 #define filtragem_h
 
@@ -11,8 +16,14 @@
 #define MAX_DADO 6000
 #define  ERRO_LOG -1
 #define ACCEPT_LOG 1
-
+/**
+*   @fn FILE* abrindo_arquivo(char* nome_arquivo);
+*   @brief Arquivo que abre um arquivo.txt .
+*   @param nome_arquivo corresponde ao nome do arquivo que tera que ser lido.
+*   @return Ponteiro para FILE* ja aberto.
+*/
 FILE* abrindo_arquivo(char* nome_arquivo);
+
 int checkLists(char* nome_arquivo,char * mensagem);
 // talvez seja melhor receber a mensagem toda para que depois possa analizar o deny terms
 int  filtragem_url(char * url);
@@ -25,3 +36,4 @@ void mensagem_log_body(char * url, char * dado);
 
 
 #endif
+
