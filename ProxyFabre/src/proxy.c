@@ -28,10 +28,10 @@ int main(int argc, char *argv[]){
     if(!strcmp(argv[1],"-i")){
         printf("INSPECAO\n");
     }
-    if(!strcmp(argv[1],"-f")){
+    else if(!strcmp(argv[1],"-f")){
         printf("FILTRAGEM\n");
     }
-    if(!strcmp(argv[1],"-c")){
+    else if(!strcmp(argv[1],"-c")){
         printf("CACHE\n");
     }
     else{
