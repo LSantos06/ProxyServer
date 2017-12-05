@@ -421,16 +421,34 @@ void handle_client(int c_newSocketFD){
                              }
                              printf("ENVIANDO DADOS \n");
                     // agora ja recebeu os dados 
-                    /////////////////////////////////////////////////////////////////////
+                              /////////////////////////////////////////////////////////////////////
                     ////            verificar se tem deny terms no dado              ////
                     ////                   ----------------                          ////   
                     /////////////////////////////////////////////////////////////////////
-        
+                   s_response = getRequestORResponseFields(buffer);
+                    int dt_b=0;
+                    if(s_response->body != NULL){
+                      dt_b = denyterms_body(s_response->body,s_response->versionORphrase){
+
+                        if(dt_b == 1){
+                           printf("Termos proibidos nos dados\n"); 
+                           printf("Fechando conexao\n"); 
+                           memset(buffer,0,BUFFER);
+                           sprintf(buffer, "Blocked website!");
+                           send(c_newSocketFD, buffer, strlen(buffer), 0);
+                           close(c_newSocketFD);  
+                           return; 
+                        }
+
+
+                     }
                              
                     /////////////////////////////////////////////////////////////////////
                     ////            COLOCAR NA CACHE  OS VALORES CORRETOS            ////
                     ////                   -------------------                       ////   
                     /////////////////////////////////////////////////////////////////////
+
+     
 
                              if(num_bytes == 0){
                                 // cabou a conexao
