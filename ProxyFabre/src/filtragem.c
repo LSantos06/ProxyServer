@@ -1,8 +1,5 @@
 #include "filtragem.h"
 
-#define ERRO_LOG -1
-#define ACC_LOG 1
-
 FILE* abrindo_arquivo(char* nome_arquivo){
   FILE *fp;
   fp = fopen(nome_arquivo, "r");
@@ -69,7 +66,7 @@ int filtragem_url(char * url)
 	aux_deny = denyterms_request(url);
 	if(aux_white){
 		//printf("\nWHITE LIST OK --- ENCAMINHAR MENSAGEM %s \n",url);
-		mensagem_log(url,ACC_LOG);
+		mensagem_log(url,ACCEPT_LOG);
 		return 1;
 	} // verificando se esta na lista negra
 	else if(aux_black){
@@ -81,11 +78,11 @@ int filtragem_url(char * url)
 	else if (aux_deny){
 	 	// se for 1 entao tem termos proibidos na url 
 		printf("\n\tdeny terms na URL  --- REJEITAR  MENSAGEM %s \n",url);
-		mensagem_log(url,ERRO_LOG);
+		mensagem_log(url,DENY_ERRO);
 		return 0;	
 	}else{
 		//printf("\n\tNada %s \n",url);
-		mensagem_log(url,ACC_LOG);
+		mensagem_log(url,NOT_FILTERED);
 		return 1;
 	}
 	
@@ -217,34 +214,51 @@ void mensagem_log(char * url, int opcao){
 	// op == ACEPT_LOG (!= 0) -> aceito
 	
 	char * mensagem =(char *) malloc(10*sizeof(char)); 
-	char * arquivo =(char *) malloc(16*sizeof(char));
+	char * arquivo =(char *) malloc(30*sizeof(char));
 	if (opcao == ERRO_LOG){
+	
 		arquivo= "ErrorLog.txt";
-		mensagem = "rejeitado";
-	}else{
+		mensagem = "rejeitado - blacklist";
+	}
+	else if(opcao == DENY_ERRO){
+	
+		arquivo= "ErrorLog.txt";
+		mensagem = "rejeitado - denyterms na URL";
+	}
+	else if(opcao == ACCEPT_LOG){
+	
+		arquivo= "AcceptLog.txt";
+		mensagem = "Aceito - whitelist";
+	}
+	else{
 		arquivo = "AcceptLog.txt";
-		mensagem = "aceito";
+		mensagem = "aceito - nao filtrado";
 	}
 	FILE *fp = abrindo_log(arquivo);
 	
 	fprintf(fp,"Data : %s [%s] :: Request foi %s: %s \n",__DATE__,__TIME__ ,mensagem,url);
 	
+
 	mensagem = NULL;
 	arquivo = NULL;
 	free(mensagem);
 	free(arquivo);
 	fclose(fp);
+
 }
+
 
 void mensagem_log_body(char * url, char * dado){
 	// op == ERRO_LOG -> rejeitado 
 	// op == ACEPT_LOG (!= 0) -> aceito
+	// op == DENY_ERRO -> 
+	// op == NOT_FILTERED
 	
 	char * mensagem =(char *) malloc(10*sizeof(char)); 
 	char * arquivo =(char *) malloc(16*sizeof(char));
 	
 	arquivo= "ErrorLog.txt";
-	mensagem = "rejeitado por palavra proibida";
+	mensagem = "rejeitado por palavra proibida nos dados";
 	
 	FILE *fp = abrindo_log(arquivo);
 	

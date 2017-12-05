@@ -14,6 +14,8 @@
 #define SIZE_LISTA 30
 #define MAX_STR 500
 #define MAX_DADO 6000
+#define NOT_FILTERED 4
+#define DENY_ERRO 3
 #define  ERRO_LOG  2
 #define ACCEPT_LOG 1
 /**
