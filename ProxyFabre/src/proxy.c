@@ -15,18 +15,31 @@ int main(int argc, char *argv[]){
     global_time =0;
     cache_size = 0;
 
-    // Argument check
-    if(argc < 2)
-    {
-        puts("how to execute: ./caching <port_number>");
-        return 0;
+    if(argc < 3){
+        perror("Para executar ./proxy <modo> <numero_da_porta> \n Lembrando que eh porta utilizada pelo IP do LoopBack");
+        exit(EXIT_FAILURE);
     }
-    if(argc > 2)
+    if(argc > 3)
     {
         perror("too many arguments\n");
         exit(EXIT_FAILURE);
     }
-    if(atoi(argv[1]) <= 1024 || atoi(argv[1]) >= 65535)
+
+    if(!strcmp(argv[1],"-i")){
+        printf("INSPECAO\n");
+    }
+    if(!strcmp(argv[1],"-f")){
+        printf("FILTRAGEM\n");
+    }
+    if(!strcmp(argv[1],"-c")){
+        printf("CACHE\n");
+    }
+    else{
+        printf("invalid argument %s\n", argv[1]);
+        exit(EXIT_FAILURE);
+    }
+
+    if(atoi(argv[2]) <= 1024 || atoi(argv[2]) >= 65535)
     {
         perror("invalid port argument\n");
         exit(EXIT_FAILURE);

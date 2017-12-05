@@ -37,19 +37,19 @@
 // Header line list structure
 typedef struct headerList
 {
-    char *headerFieldName;
-    char *value;
+    char *headerFieldName; /**<	 String para armazenar o "campo" */
+    char *value;    /**< String para armazenar o valor do "campo" */
     struct headerList *next;
 } HeaderList;
 
 // Request/Response message structure
 typedef struct requestORresponse
 {
-    char *methodORversion; // request:method,response:vesion
-    char *urlORstatusCode; // request:url,response:statusCode
-    char *versionORphrase; // request:version,response:phrase
+    char *methodORversion; /**< Se for request:method,se for response:version */
+    char *urlORstatusCode; /**< Se for request:url, se for response:statusCode */
+    char *versionORphrase; /**< Se for request:version, se for response:phrase */
     HeaderList *headers;
-    char *body;
+    char *body; /**< Corpo da requisicao */
 } RequestORResponse;
 
 /**

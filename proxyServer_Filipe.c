@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include "filtragem.h"
+#include "inspecao.h"
 
 
 #define BACKLOG 20 // How many pending connections queue will hold
@@ -177,6 +178,8 @@ void *connectionHandler(void *c_pNewSocketFD)
         printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",c_request->methodORversion,c_request->urlORstatusCode,c_request->versionORphrase);
         printHeaderList(c_request->headers);
         printf("\nbody: %s\n\n",c_request->body);
+
+        intercepta_requisicao(c_request);
 
         // Creating proxy client socket file descriptor
         if ((s_clientFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) // == -1

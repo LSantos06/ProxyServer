@@ -24,8 +24,7 @@ void intercepta_requisicao(RequestORResponse *c_request){
         printf("What field do you want to edit?\n");
         scanf("%s", field_answer);
  
-        for(auxHeaderList=c_request->headers;auxHeaderList!=NULL;auxHeaderList=auxHeaderList->next)
-        {
+        for(auxHeaderList=c_request->headers;auxHeaderList!=NULL;auxHeaderList=auxHeaderList->next){
             if(!strcmp(auxHeaderList->headerFieldName,field_answer)){
                 edita_campo_requisicao(auxHeaderList);
                 break;
@@ -44,10 +43,6 @@ void intercepta_requisicao(RequestORResponse *c_request){
 void edita_campo_requisicao(){
     return;
 }
-// exibicao da janela de requisicao
-void janela_requisicao(){
-    return;
-}
 // manda a requisicao para o proxy
 void proxy_envia(){
     return;
@@ -56,6 +51,34 @@ void proxy_envia(){
 /* Inspecao das respostas */
 // intercepta a resposta antes da mesma ser entregue ao browser
 void intercepta_resposta(RequestORResponse *s_response){
+    char edit_answer[10];
+    char field_answer[50];
+    HeaderList *auxHeaderList = NULL;
+
+    printf("Response intercepted:\n");
+    printf("\n\nmethodORversion: %s, urlORstatusCode: %s, versionORphrase: %s",s_response->methodORversion,s_response->urlORstatusCode,s_response->versionORphrase);
+    printHeaderList(s_response->headers);
+    printf("\nbody: %s\n\n",s_response->body);   
+
+    printf("Do you want to edit the response? (y/n)\n");
+    scanf("%s", edit_answer);
+    if(edit_answer == "y"){
+        printf("What field do you want to edit?\n");
+        scanf("%s", field_answer);
+ 
+        for(auxHeaderList=s_response->headers;auxHeaderList!=NULL;auxHeaderList=auxHeaderList->next){
+            if(!strcmp(auxHeaderList->headerFieldName,field_answer)){
+                edita_campo_requisicao(auxHeaderList);
+                break;
+            }
+            else{
+                print("Invalid field %s", field_answer);
+                break;
+            }
+        }
+    }
+    printf("End of inspection\n");
+
     return;
 }
 // edita um campo da resposta
