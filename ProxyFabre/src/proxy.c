@@ -1,5 +1,6 @@
 #include "filtragem.h"
 #include "estruturas.h"
+#include "cache.h"
 
 
 int main(int argc, char *argv[]){

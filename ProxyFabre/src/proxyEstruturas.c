@@ -2,8 +2,7 @@
 #include "estruturas.h"
 
 // Handles each client connection
-void *connectionHandler(void *c_pNewSocketFD)
-{
+void *connectionHandler(void *c_pNewSocketFD){
     // c_: about client-proxy interface (proxy is server)
     int c_newSocketFD = *(int*)c_pNewSocketFD;
  
